@@ -143,11 +143,11 @@ export default function Contacts() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="További információk..."
-              className="min-h-[100px]"
+              className="min-h-[40px] resize-none"
             />
           </div>
         </div>
-        <div className="flex justify-end gap-2">
+        <div className="flex gap-2">
           {editingContact && (
             <Button
               type="button"
