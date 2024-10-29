@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lock, User } from "lucide-react";
 import { toast } from "sonner";
+import { authenticateUser } from "@/lib/auth";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -18,15 +19,22 @@ export default function Login() {
     }
   }, [navigate]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (username === "admin" && password === "password") {
-      localStorage.setItem("isAuthenticated", "true");
-      toast.success("Sikeres bejelentkezés!");
-      navigate("/");
-    } else {
-      toast.error("Hibás felhasználónév vagy jelszó!");
+    try {
+      const isAuthenticated = await authenticateUser(username, password);
+      
+      if (isAuthenticated) {
+        localStorage.setItem("isAuthenticated", "true");
+        toast.success("Sikeres bejelentkezés!");
+        navigate("/");
+      } else {
+        toast.error("Hibás felhasználónév vagy jelszó!");
+      }
+    } catch (error) {
+      toast.error("Hiba történt a bejelentkezés során!");
+      console.error(error);
     }
   };
 
