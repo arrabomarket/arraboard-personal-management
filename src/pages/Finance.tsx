@@ -9,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Transaction, TransactionCategory, TransactionType } from "@/types/finance";
-import TransactionCard from "@/components/finance/TransactionCard";
 import TransactionTable from "@/components/finance/TransactionTable";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -130,12 +129,6 @@ export default function Finance() {
         </div>
         <Button type="submit">Hozzáadás</Button>
       </form>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {transactions.map((transaction) => (
-          <TransactionCard key={transaction.id} transaction={transaction} />
-        ))}
-      </div>
 
       <div className="space-y-4">
         <div className="flex justify-between items-center">
