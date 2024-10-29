@@ -13,6 +13,7 @@
   "dependencies": {
     "@fontsource/poppins": "^5.1.0",
     "@hookform/resolvers": "^3.9.0",
+    "@prisma/client": "^5.21.1",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -49,7 +50,9 @@
     "input-otp": "^1.2.4",
     "lovable-tagger": "^1.0.15",
     "lucide-react": "^0.451.0",
+    "mysql2": "^3.11.3",
     "next-themes": "^0.3.0",
+    "prisma": "^5.21.1",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
