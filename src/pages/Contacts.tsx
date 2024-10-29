@@ -134,7 +134,7 @@ export default function Contacts() {
               required
             />
           </div>
-          <div className="space-y-2 md:col-span-2">
+          <div className="space-y-2">
             <label htmlFor="notes" className="text-sm font-medium">
               Egyéb adatok
             </label>
