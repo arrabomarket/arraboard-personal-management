@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, Projector, Calendar, ListCheck, ChartBar } from "lucide-react";
+import { Clock, Projector, Calendar, ListCheck, Bell } from "lucide-react";
 import { format } from "date-fns";
 import { hu } from "date-fns/locale";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -23,10 +22,11 @@ export default function Dashboard() {
     { id: 2, title: "Email küldése" },
     { id: 3, title: "Dokumentáció írása" },
   ];
-  const mockFinanceData = [
-    { name: "Jan", bevétel: 400000, kiadás: 300000 },
-    { name: "Feb", bevétel: 500000, kiadás: 400000 },
-    { name: "Már", bevétel: 450000, kiadás: 350000 },
+
+  const mockNotifications = [
+    { id: 1, title: "Új projekt létrehozva" },
+    { id: 2, title: "Közelgő határidő" },
+    { id: 3, title: "Frissítés elérhető" },
   ];
 
   return (
@@ -69,7 +69,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-2">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Közelgő tennivalók</CardTitle>
             <ListCheck className="h-4 w-4 text-muted-foreground" />
@@ -88,31 +88,21 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="col-span-3">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Havi kiadás/bevétel</CardTitle>
-            <ChartBar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Értesítések</CardTitle>
+            <Bell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full">
-              <BarChart
-                width={800}
-                height={300}
-                data={mockFinanceData}
-                margin={{
-                  top: 20,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="bevétel" fill="#4ade80" name="Bevétel" />
-                <Bar dataKey="kiadás" fill="#f87171" name="Kiadás" />
-              </BarChart>
+            <div className="space-y-2">
+              {mockNotifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="flex items-center justify-between rounded-lg border p-3"
+                >
+                  <span>{notification.title}</span>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
