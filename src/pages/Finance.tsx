@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,7 +22,10 @@ import { CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Finance() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    const savedTransactions = localStorage.getItem('transactions');
+    return savedTransactions ? JSON.parse(savedTransactions) : [];
+  });
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState<Date>(new Date());
@@ -30,6 +33,10 @@ export default function Finance() {
   const [type, setType] = useState<TransactionType>("expense");
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [selectedCategory, setSelectedCategory] = useState<TransactionCategory | "all">("all");
+
+  useEffect(() => {
+    localStorage.setItem('transactions', JSON.stringify(transactions));
+  }, [transactions]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
