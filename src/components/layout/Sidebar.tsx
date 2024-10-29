@@ -7,7 +7,8 @@ import {
   Wallet, 
   FolderKanban, 
   Users, 
-  Link as LinkIcon 
+  Link as LinkIcon,
+  Calendar as CalendarIcon
 } from "lucide-react";
 
 const navigation = [
@@ -18,6 +19,7 @@ const navigation = [
   { name: "Projektek", href: "/projects", icon: FolderKanban },
   { name: "Kapcsolatok", href: "/contacts", icon: Users },
   { name: "Linkek", href: "/links", icon: LinkIcon },
+  { name: "Naptár", href: "/calendar", icon: CalendarIcon },
 ];
 
 export default function Sidebar() {

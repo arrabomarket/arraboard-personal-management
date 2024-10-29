@@ -7,6 +7,7 @@ import Finance from "./pages/Finance";
 import Projects from "./pages/Projects";
 import Contacts from "./pages/Contacts";
 import Links from "./pages/Links";
+import Calendar from "./pages/Calendar";
 
 const App = () => (
   <BrowserRouter>
@@ -19,6 +20,7 @@ const App = () => (
         <Route path="/projects" element={<Projects />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/links" element={<Links />} />
+        <Route path="/calendar" element={<Calendar />} />
       </Routes>
     </Layout>
   </BrowserRouter>
