@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,6 +28,7 @@ export default function Finance() {
   const [date, setDate] = useState<Date>(new Date());
   const [category, setCategory] = useState<TransactionCategory>("personal");
   const [type, setType] = useState<TransactionType>("expense");
+  const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [selectedCategory, setSelectedCategory] = useState<TransactionCategory | "all">("all");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,15 +58,14 @@ export default function Finance() {
   };
 
   const filteredTransactions = transactions.filter((transaction) => {
-    const now = new Date();
-    const isInCurrentMonth = 
-      transaction.date >= startOfMonth(now) &&
-      transaction.date <= endOfMonth(now);
+    const isInSelectedMonth = 
+      transaction.date >= startOfMonth(selectedMonth) &&
+      transaction.date <= endOfMonth(selectedMonth);
     
     const matchesCategory = 
       selectedCategory === "all" || transaction.category === selectedCategory;
 
-    return isInCurrentMonth && matchesCategory;
+    return isInSelectedMonth && matchesCategory;
   });
 
   return (
@@ -134,6 +134,22 @@ export default function Finance() {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold">Tranzakciók</h2>
           <div className="flex gap-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(selectedMonth, "yyyy. MMMM")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={selectedMonth}
+                  onSelect={(date) => date && setSelectedMonth(date)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
             <Select 
               value={selectedCategory} 
               onValueChange={(value) => setSelectedCategory(value as TransactionCategory | "all")}
