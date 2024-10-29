@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Search } from "lucide-react";
 import LinkTable from "@/components/links/LinkTable";
 import { toast } from "sonner";
@@ -30,7 +23,7 @@ export default function Links() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name.trim() || !url.trim() || !category) {
+    if (!name.trim() || !url.trim() || !category.trim()) {
       toast.error("Kérjük töltse ki az összes mezőt!");
       return;
     }
@@ -39,7 +32,7 @@ export default function Links() {
       // Update existing link
       const updatedLinks = links.map((link) =>
         link.id === editingLink.id
-          ? { ...link, name: name.trim(), url: url.trim(), category }
+          ? { ...link, name: name.trim(), url: url.trim(), category: category.trim() }
           : link
       );
       setLinks(updatedLinks);
@@ -50,7 +43,7 @@ export default function Links() {
         id: crypto.randomUUID(),
         name: name.trim(),
         url: url.trim(),
-        category,
+        category: category.trim(),
       };
       setLinks([...links, newLink]);
       toast.success("Link sikeresen hozzáadva!");
@@ -120,16 +113,13 @@ export default function Links() {
             <label htmlFor="category" className="text-sm font-medium">
               Kategória *
             </label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger id="category">
-                <SelectValue placeholder="Válasszon kategóriát" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="hivatalos">Hivatalos</SelectItem>
-                <SelectItem value="partner">Partner</SelectItem>
-                <SelectItem value="egyeb">Egyéb</SelectItem>
-              </SelectContent>
-            </Select>
+            <Input
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Kategória"
+              required
+            />
           </div>
         </div>
         <div className="flex gap-2">
