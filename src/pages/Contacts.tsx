@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,6 +29,19 @@ export default function Contacts() {
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
+
+  // Load contacts from localStorage on component mount
+  useEffect(() => {
+    const savedContacts = localStorage.getItem("contacts");
+    if (savedContacts) {
+      setContacts(JSON.parse(savedContacts));
+    }
+  }, []);
+
+  // Save contacts to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("contacts", JSON.stringify(contacts));
+  }, [contacts]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

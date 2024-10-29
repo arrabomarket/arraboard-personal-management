@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -19,6 +19,19 @@ export default function Links() {
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState("");
   const [editingLink, setEditingLink] = useState<Link | null>(null);
+
+  // Load links from localStorage on component mount
+  useEffect(() => {
+    const savedLinks = localStorage.getItem("links");
+    if (savedLinks) {
+      setLinks(JSON.parse(savedLinks));
+    }
+  }, []);
+
+  // Save links to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("links", JSON.stringify(links));
+  }, [links]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

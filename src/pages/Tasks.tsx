@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import TaskCard from "@/components/tasks/TaskCard";
 import { toast } from "sonner";
 
@@ -20,6 +20,19 @@ interface Category {
 export default function Tasks() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [newCategory, setNewCategory] = useState("");
+
+  // Load categories from localStorage on component mount
+  useEffect(() => {
+    const savedCategories = localStorage.getItem("taskCategories");
+    if (savedCategories) {
+      setCategories(JSON.parse(savedCategories));
+    }
+  }, []);
+
+  // Save categories to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("taskCategories", JSON.stringify(categories));
+  }, [categories]);
 
   const handleAddCategory = (e: React.FormEvent) => {
     e.preventDefault();

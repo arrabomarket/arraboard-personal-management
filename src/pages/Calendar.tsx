@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,22 @@ export default function CalendarPage() {
   const [date, setDate] = useState<Date>(new Date());
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodo, setNewTodo] = useState("");
+
+  // Load todos from localStorage on component mount
+  useEffect(() => {
+    const savedTodos = localStorage.getItem("calendarTodos");
+    if (savedTodos) {
+      setTodos(JSON.parse(savedTodos, (key, value) => {
+        if (key === 'date') return new Date(value);
+        return value;
+      }));
+    }
+  }, []);
+
+  // Save todos to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("calendarTodos", JSON.stringify(todos));
+  }, [todos]);
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,4 +116,3 @@ export default function CalendarPage() {
       </div>
     </div>
   );
-}
