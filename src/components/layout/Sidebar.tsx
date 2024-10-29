@@ -28,7 +28,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 h-screen bg-white border-r border-border flex flex-col">
       <div className="p-6">
-        <h1 className="text-2xl font-bold">ArraBoard</h1>
+        <img src="/ArraBoard.png" alt="ArraBoard" className="h-8" />
       </div>
       <nav className="flex-1 px-3 py-2 space-y-1">
         {navigation.map((item) => {
