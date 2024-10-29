@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout";
+import AuthGuard from "./components/layout/AuthGuard";
+import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
 import Notes from "./pages/Notes";
@@ -11,18 +13,28 @@ import Calendar from "./pages/Calendar";
 
 const App = () => (
   <BrowserRouter>
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/tasks" element={<Tasks />} />
-        <Route path="/notes" element={<Notes />} />
-        <Route path="/finance" element={<Finance />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/contacts" element={<Contacts />} />
-        <Route path="/links" element={<Links />} />
-        <Route path="/calendar" element={<Calendar />} />
-      </Routes>
-    </Layout>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/*"
+        element={
+          <AuthGuard>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/tasks" element={<Tasks />} />
+                <Route path="/notes" element={<Notes />} />
+                <Route path="/finance" element={<Finance />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/contacts" element={<Contacts />} />
+                <Route path="/links" element={<Links />} />
+                <Route path="/calendar" element={<Calendar />} />
+              </Routes>
+            </Layout>
+          </AuthGuard>
+        }
+      />
+    </Routes>
   </BrowserRouter>
 );
 
