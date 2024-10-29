@@ -26,7 +26,7 @@ export default function Sidebar() {
   const location = useLocation();
 
   return (
-    <div className="w-64 h-screen bg-white border-r border-border flex flex-col">
+    <div className="w-64 h-full bg-white border-r border-border flex flex-col">
       <div className="p-6">
         <img src="/ArraBoard.png" alt="ArraBoard" className="h-8" />
       </div>
