@@ -109,7 +109,7 @@ export default function Finance() {
             </PopoverContent>
           </Popover>
           <Select value={category} onValueChange={(value) => setCategory(value as TransactionCategory)}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white">
               <SelectValue placeholder="Kategória" />
             </SelectTrigger>
             <SelectContent>
@@ -119,7 +119,7 @@ export default function Finance() {
             </SelectContent>
           </Select>
           <Select value={type} onValueChange={(value) => setType(value as TransactionType)}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white">
               <SelectValue placeholder="Jelleg" />
             </SelectTrigger>
             <SelectContent>
@@ -161,7 +161,7 @@ export default function Finance() {
               value={selectedCategory} 
               onValueChange={(value) => setSelectedCategory(value as TransactionCategory | "all")}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Kategória" />
               </SelectTrigger>
               <SelectContent>
