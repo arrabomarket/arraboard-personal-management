@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,19 @@ export default function KanbanBoard({ id, title, onDelete }: KanbanBoardProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
   const [editingTask, setEditingTask] = useState<string | null>(null);
+
+  // Load tasks from localStorage
+  useEffect(() => {
+    const savedTasks = localStorage.getItem(`project-${id}-tasks`);
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+  }, [id]);
+
+  // Save tasks to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(`project-${id}-tasks`, JSON.stringify(tasks));
+  }, [tasks, id]);
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +76,11 @@ export default function KanbanBoard({ id, title, onDelete }: KanbanBoardProps) {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => onDelete(id)}
+          onClick={() => {
+            // Töröljük a feladatokat is amikor a projektet töröljük
+            localStorage.removeItem(`project-${id}-tasks`);
+            onDelete(id);
+          }}
           className="h-8 w-8 p-0"
         >
           <X className="h-4 w-4" />
