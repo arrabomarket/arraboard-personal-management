@@ -3,38 +3,40 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, User } from "lucide-react";
+import { User, Mail, Lock } from "lucide-react";
 import { toast } from "sonner";
 import Logo from "@/components/layout/Logo";
 
-export default function Login() {
+export default function Register() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password) {
+    // Itt implementálnánk a valós regisztrációt
+    if (!username || !email || !password) {
       toast.error("Kérjük töltse ki az összes mezőt!");
       return;
     }
 
     try {
-      // Demo célból csak ellenőrizzük a localStorage-ból
+      // Demo célból csak elmentjük localStorage-ba
       const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find((u: any) => u.username === username && u.password === password);
-      
-      if (user || (username === 'admin' && password === 'password')) {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("currentUser", username);
-        toast.success("Sikeres bejelentkezés!");
-        navigate("/");
-      } else {
-        toast.error("Hibás felhasználónév vagy jelszó!");
+      if (users.some((u: any) => u.username === username)) {
+        toast.error("Ez a felhasználónév már foglalt!");
+        return;
       }
+
+      users.push({ username, email, password });
+      localStorage.setItem("users", JSON.stringify(users));
+      
+      toast.success("Sikeres regisztráció!");
+      navigate("/login");
     } catch (error) {
-      toast.error("Hiba történt a bejelentkezés során!");
+      toast.error("Hiba történt a regisztráció során!");
     }
   };
 
@@ -43,10 +45,10 @@ export default function Login() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <Logo />
-          <CardTitle className="text-2xl font-bold mt-4">Bejelentkezés</CardTitle>
+          <CardTitle className="text-2xl font-bold mt-4">Regisztráció</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleRegister} className="space-y-4">
             <div className="space-y-2">
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -55,6 +57,18 @@ export default function Login() {
                   placeholder="Felhasználónév"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  type="email"
+                  placeholder="Email cím"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="pl-9"
                 />
               </div>
@@ -71,16 +85,11 @@ export default function Login() {
                 />
               </div>
             </div>
-            <div className="text-right">
-              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                Elfelejtett jelszó?
-              </Link>
-            </div>
             <Button type="submit" className="w-full">
-              Bejelentkezés
+              Regisztráció
             </Button>
             <div className="text-center text-sm">
-              Még nincs fiókja? <Link to="/register" className="text-primary hover:underline">Regisztráció</Link>
+              Már van fiókja? <Link to="/login" className="text-primary hover:underline">Bejelentkezés</Link>
             </div>
           </form>
         </CardContent>

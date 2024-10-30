@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
@@ -8,8 +8,12 @@ import {
   FolderKanban, 
   Users, 
   Link as LinkIcon,
-  Calendar as CalendarIcon
+  Calendar as CalendarIcon,
+  LogOut
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import Logo from "./Logo";
 
 const navigation = [
   { name: "Irányítópult", href: "/", icon: LayoutDashboard },
@@ -24,11 +28,19 @@ const navigation = [
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("currentUser");
+    toast.success("Sikeres kijelentkezés!");
+    navigate("/login");
+  };
 
   return (
     <div className="w-64 h-full bg-white border-r border-border flex flex-col">
       <div className="p-6">
-        <img src="/ArraBoard.png" alt="ArraBoard" className="h-8" />
+        <Logo />
       </div>
       <nav className="flex-1 px-3 py-2 space-y-1">
         {navigation.map((item) => {
@@ -45,6 +57,16 @@ export default function Sidebar() {
           );
         })}
       </nav>
+      <div className="p-4">
+        <Button 
+          variant="ghost" 
+          className="w-full bg-[#222222] text-white hover:bg-[#333333]"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-5 h-5 mr-2" />
+          Kijelentkezés
+        </Button>
+      </div>
     </div>
   );
 }
