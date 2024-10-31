@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, ListCheck, Calendar, Wallet } from "lucide-react";
+import { Clock, ListCheck, Calendar as CalendarIcon, Wallet } from "lucide-react";
 import { format } from "date-fns";
 import { hu } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -99,7 +100,7 @@ export default function Dashboard() {
         <Card className="h-fit bg-black text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Dátum</CardTitle>
-            <Calendar className="h-4 w-4" />
+            <CalendarIcon className="h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -164,15 +165,16 @@ export default function Dashboard() {
         <Card className="h-fit">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Naptár</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CalendarIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {format(currentTime, "EEEE", { locale: hu })}
-            </div>
-            <p className="text-muted-foreground">
-              {format(currentTime, "yyyy. MMMM d.", { locale: hu })}
-            </p>
+            <Calendar
+              mode="single"
+              selected={currentTime}
+              locale={hu}
+              className="rounded-md border"
+              disabled
+            />
           </CardContent>
         </Card>
       </div>
