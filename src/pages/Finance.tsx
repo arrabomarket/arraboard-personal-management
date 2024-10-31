@@ -24,7 +24,19 @@ export default function Finance() {
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [selectedCategory, setSelectedCategory] = useState<TransactionCategory | "all">("all");
 
-  // Betöltjük a mentett tranzakciókat
+  // Egyedi hónapok kiszűrése a tranzakciókból
+  const availableMonths = Array.from(
+    new Set(
+      transactions.map((t) => format(t.date, "yyyy-MM"))
+    )
+  ).map((monthStr) => {
+    const date = parse(monthStr, "yyyy-MM", new Date());
+    return {
+      value: monthStr,
+      label: format(date, "yyyy. MMMM", { locale: hu })
+    };
+  }).sort((a, b) => a.value.localeCompare(b.value));
+
   useEffect(() => {
     const savedTransactions = localStorage.getItem("transactions");
     if (savedTransactions) {
@@ -85,6 +97,15 @@ export default function Finance() {
     return isInSelectedMonth && matchesCategory;
   });
 
+  const getCategoryLabel = (category: TransactionCategory) => {
+    switch(category) {
+      case "personal": return "Személyes";
+      case "work": return "Munka";
+      case "extra": return "Extra";
+      default: return category;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Pénzügy</h1>
@@ -111,7 +132,7 @@ export default function Finance() {
             <SelectTrigger className="bg-white">
               <SelectValue placeholder="Kategória" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white">
               <SelectItem value="personal">Személyes</SelectItem>
               <SelectItem value="work">Munka</SelectItem>
               <SelectItem value="extra">Extra</SelectItem>
@@ -121,7 +142,7 @@ export default function Finance() {
             <SelectTrigger className="bg-white">
               <SelectValue placeholder="Jelleg" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white">
               <SelectItem value="income">Bevétel</SelectItem>
               <SelectItem value="expense">Kiadás</SelectItem>
             </SelectContent>
@@ -141,8 +162,8 @@ export default function Finance() {
               <SelectTrigger className="bg-white w-[200px]">
                 <SelectValue placeholder="Válasszon hónapot" />
               </SelectTrigger>
-              <SelectContent>
-                {months.map((month) => (
+              <SelectContent className="bg-white">
+                {availableMonths.map((month) => (
                   <SelectItem key={month.value} value={month.value}>
                     {month.label}
                   </SelectItem>
@@ -156,7 +177,7 @@ export default function Finance() {
               <SelectTrigger className="bg-white">
                 <SelectValue placeholder="Kategória" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white">
                 <SelectItem value="all">Összes</SelectItem>
                 <SelectItem value="personal">Személyes</SelectItem>
                 <SelectItem value="work">Munka</SelectItem>

@@ -14,9 +14,10 @@ export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [newProjectTitle, setNewProjectTitle] = useState("");
 
-  // Load projects from localStorage on component mount
+  // Load projects and tasks from localStorage on component mount
   useEffect(() => {
     const savedProjects = localStorage.getItem("projects");
+    const savedTasks = localStorage.getItem("projectTasks");
     if (savedProjects) {
       setProjects(JSON.parse(savedProjects));
     }
@@ -46,6 +47,10 @@ export default function Projects() {
 
   const handleDeleteProject = (projectId: string) => {
     setProjects(projects.filter(project => project.id !== projectId));
+    // Töröljük a projekthez tartozó feladatokat is
+    const savedTasks = JSON.parse(localStorage.getItem("projectTasks") || "{}");
+    delete savedTasks[projectId];
+    localStorage.setItem("projectTasks", JSON.stringify(savedTasks));
     toast.success("Projekt sikeresen törölve!");
   };
 

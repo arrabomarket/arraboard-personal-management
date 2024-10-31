@@ -14,6 +14,15 @@ interface TransactionTableProps {
 }
 
 export default function TransactionTable({ transactions }: TransactionTableProps) {
+  const getCategoryLabel = (category: string) => {
+    switch(category) {
+      case "personal": return "Személyes";
+      case "work": return "Munka";
+      case "extra": return "Extra";
+      default: return category;
+    }
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -33,7 +42,7 @@ export default function TransactionTable({ transactions }: TransactionTableProps
               {transaction.type === 'income' ? '+' : '-'} {transaction.amount.toLocaleString('hu-HU')} Ft
             </TableCell>
             <TableCell>{format(transaction.date, 'yyyy.MM.dd')}</TableCell>
-            <TableCell className="capitalize">{transaction.category}</TableCell>
+            <TableCell className="capitalize">{getCategoryLabel(transaction.category)}</TableCell>
             <TableCell className="capitalize">
               {transaction.type === 'income' ? 'Bevétel' : 'Kiadás'}
             </TableCell>
