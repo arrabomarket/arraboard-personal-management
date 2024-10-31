@@ -1,69 +1,73 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { 
-  LayoutDashboard, 
-  CheckSquare, 
-  FileText, 
-  Wallet, 
-  FolderKanban, 
-  Users, 
-  Link as LinkIcon,
-  Calendar as CalendarIcon,
-  LogOut
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import {
+  Calendar,
+  Contact2,
+  FileText,
+  Home,
+  Link as LinkIcon,
+  LogOut,
+  ScrollText,
+  Target,
+  Wallet,
+  Lock,
+} from "lucide-react";
 import Logo from "./Logo";
-
-const navigation = [
-  { name: "Irányítópult", href: "/", icon: LayoutDashboard },
-  { name: "Tennivalók", href: "/tasks", icon: CheckSquare },
-  { name: "Jegyzetek", href: "/notes", icon: FileText },
-  { name: "Pénzügy", href: "/finance", icon: Wallet },
-  { name: "Projektek", href: "/projects", icon: FolderKanban },
-  { name: "Kapcsolatok", href: "/contacts", icon: Users },
-  { name: "Linkek", href: "/links", icon: LinkIcon },
-  { name: "Naptár", href: "/calendar", icon: CalendarIcon },
-];
 
 export default function Sidebar() {
   const location = useLocation();
-  const navigate = useNavigate();
+  const currentUser = localStorage.getItem("currentUser");
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("currentUser");
-    toast.success("Sikeres kijelentkezés!");
-    navigate("/login");
+    window.location.href = "/login";
   };
 
+  const links = [
+    { href: "/", label: "Áttekintés", icon: Home },
+    { href: "/tasks", label: "Tennivalók", icon: Target },
+    { href: "/notes", label: "Jegyzetek", icon: FileText },
+    { href: "/finance", label: "Pénzügyek", icon: Wallet },
+    { href: "/projects", label: "Projektek", icon: ScrollText },
+    { href: "/contacts", label: "Kapcsolatok", icon: Contact2 },
+    { href: "/links", label: "Linkek", icon: LinkIcon },
+    { href: "/calendar", label: "Naptár", icon: Calendar },
+    { href: "/passwords", label: "Jelszókezelő", icon: Lock },
+  ];
+
   return (
-    <div className="w-64 h-full bg-white border-r border-border flex flex-col">
+    <div className="flex h-full w-64 flex-col border-r bg-white">
       <div className="p-6">
         <Logo />
       </div>
-      <nav className="flex-1 px-3 py-2 space-y-1">
-        {navigation.map((item) => {
-          const isActive = location.pathname === item.href;
-          return (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={cn("sidebar-link", isActive && "active")}
+      <nav className="flex-1 space-y-1 px-3 py-2">
+        {links.map(({ href, label, icon: Icon }) => (
+          <Link key={href} to={href}>
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start gap-2",
+                location.pathname === href && "bg-accent"
+              )}
             >
-              <item.icon className="w-5 h-5" />
-              <span>{item.name}</span>
-            </Link>
-          );
-        })}
+              <Icon className="h-4 w-4" />
+              {label}
+            </Button>
+          </Link>
+        ))}
       </nav>
-      <div className="p-4">
-        <Button 
-          variant="ghost" 
-          className="w-full bg-[#222222] text-white hover:bg-[#333333]"
+      <div className="border-t p-4">
+        <div className="mb-2 px-3 text-sm text-muted-foreground">
+          Bejelentkezve mint: {currentUser}
+        </div>
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-2"
           onClick={handleLogout}
         >
-          <LogOut className="w-5 h-5 mr-2" />
+          <LogOut className="h-4 w-4" />
           Kijelentkezés
         </Button>
       </div>
