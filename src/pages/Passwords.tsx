@@ -55,12 +55,15 @@ export default function Passwords() {
     toast.success("Jelszó sikeresen törölve!");
   };
 
-  const filteredPasswords = passwords.filter((password) =>
-    Object.values(password)
-      .join(" ")
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+  const filteredPasswords = passwords.filter((password) => {
+    const searchString = searchTerm.toLowerCase();
+    const passwordValues = [
+      password.name,
+      password.url,
+    ].filter(Boolean).join(" ").toLowerCase();
+    
+    return passwordValues.includes(searchString);
+  });
 
   return (
     <div className="space-y-8">
