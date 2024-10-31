@@ -15,7 +15,11 @@ import {
 } from "lucide-react";
 import Logo from "./Logo";
 
-export default function Sidebar() {
+interface SidebarProps {
+  onNavigate?: () => void;
+}
+
+export default function Sidebar({ onNavigate }: SidebarProps) {
   const location = useLocation();
   const currentUser = localStorage.getItem("currentUser");
 
@@ -37,6 +41,12 @@ export default function Sidebar() {
     { href: "/passwords", label: "Jelszókezelő", icon: Lock },
   ];
 
+  const handleClick = () => {
+    if (onNavigate) {
+      onNavigate();
+    }
+  };
+
   return (
     <div className="flex h-full w-64 flex-col border-r bg-white">
       <div className="p-6">
@@ -44,12 +54,12 @@ export default function Sidebar() {
       </div>
       <nav className="flex-1 space-y-1 px-3 py-2">
         {links.map(({ href, label, icon: Icon }) => (
-          <Link key={href} to={href}>
+          <Link key={href} to={href} onClick={handleClick}>
             <Button
               variant="ghost"
               className={cn(
                 "w-full justify-start gap-2",
-                location.pathname === href && "bg-accent"
+                location.pathname === href && "bg-accent text-white"
               )}
             >
               <Icon className="h-4 w-4" />

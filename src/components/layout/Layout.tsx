@@ -3,8 +3,11 @@ import Sidebar from "./Sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="flex h-screen bg-background">
       {/* Desktop Sidebar */}
@@ -14,21 +17,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Menu */}
       <div className="md:hidden fixed top-4 left-4 z-50">
-        <Sheet>
+        <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0">
-            <Sidebar />
+            <Sidebar onNavigate={() => setIsOpen(false)} />
           </SheetContent>
         </Sheet>
       </div>
 
       <main className="flex-1 overflow-auto">
         <div className="container py-6">
-          {children}
+          <div className="md:ml-0 ml-8">
+            {children}
+          </div>
         </div>
       </main>
       <Toaster />
