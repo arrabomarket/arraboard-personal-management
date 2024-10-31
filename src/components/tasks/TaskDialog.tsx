@@ -52,9 +52,9 @@ export default function TaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px] text-[16px]">
         <DialogHeader>
-          <DialogTitle>{category.name} - Tennivalók</DialogTitle>
+          <DialogTitle className="text-[18px]">{category.name} - Tennivalók</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <form onSubmit={handleSubmit} className="flex gap-2">
@@ -62,6 +62,7 @@ export default function TaskDialog({
               placeholder="Új tennivaló..."
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
+              className="text-[16px]"
             />
             <Button type="submit">Hozzáad</Button>
           </form>
@@ -75,7 +76,7 @@ export default function TaskDialog({
                 />
                 <label
                   htmlFor={task.id}
-                  className={`text-sm ${
+                  className={`text-[16px] ${
                     task.completed ? "line-through text-muted-foreground" : ""
                   }`}
                 >

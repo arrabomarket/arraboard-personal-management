@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,15 +10,8 @@ import {
 } from "@/components/ui/select";
 import { Transaction, TransactionCategory, TransactionType } from "@/types/finance";
 import TransactionTable from "@/components/finance/TransactionTable";
-import { format, startOfMonth, endOfMonth } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { format, startOfMonth, endOfMonth, parse } from "date-fns";
+import { hu } from "date-fns/locale";
 import { toast } from "sonner";
 
 export default function Finance() {
@@ -30,6 +23,22 @@ export default function Finance() {
   const [type, setType] = useState<TransactionType>("expense");
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [selectedCategory, setSelectedCategory] = useState<TransactionCategory | "all">("all");
+
+  // Betöltjük a mentett tranzakciókat
+  useEffect(() => {
+    const savedTransactions = localStorage.getItem("transactions");
+    if (savedTransactions) {
+      setTransactions(JSON.parse(savedTransactions, (key, value) => {
+        if (key === 'date') return new Date(value);
+        return value;
+      }));
+    }
+  }, []);
+
+  // Mentjük a tranzakciókat amikor változnak
+  useEffect(() => {
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+  }, [transactions]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +65,14 @@ export default function Finance() {
     setType("expense");
     toast.success("Tétel sikeresen hozzáadva!");
   };
+
+  const months = Array.from({ length: 12 }, (_, i) => {
+    const date = new Date(2024, i, 1);
+    return {
+      value: format(date, "yyyy-MM"),
+      label: format(date, "yyyy. MMMM", { locale: hu })
+    };
+  });
 
   const filteredTransactions = transactions.filter((transaction) => {
     const isInSelectedMonth = 
@@ -85,28 +102,11 @@ export default function Finance() {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "justify-start text-left font-normal",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "yyyy.MM.dd") : "Dátum kiválasztása"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(date) => date && setDate(date)}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <Input
+            type="date"
+            value={format(date, "yyyy-MM-dd")}
+            onChange={(e) => setDate(new Date(e.target.value))}
+          />
           <Select value={category} onValueChange={(value) => setCategory(value as TransactionCategory)}>
             <SelectTrigger className="bg-white">
               <SelectValue placeholder="Kategória" />
@@ -134,22 +134,21 @@ export default function Finance() {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold">Tranzakciók</h2>
           <div className="flex gap-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {format(selectedMonth, "yyyy. MMMM")}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={selectedMonth}
-                  onSelect={(date) => date && setSelectedMonth(date)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <Select 
+              value={format(selectedMonth, "yyyy-MM")}
+              onValueChange={(value) => setSelectedMonth(parse(value, "yyyy-MM", new Date()))}
+            >
+              <SelectTrigger className="bg-white w-[200px]">
+                <SelectValue placeholder="Válasszon hónapot" />
+              </SelectTrigger>
+              <SelectContent>
+                {months.map((month) => (
+                  <SelectItem key={month.value} value={month.value}>
+                    {month.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Select 
               value={selectedCategory} 
               onValueChange={(value) => setSelectedCategory(value as TransactionCategory | "all")}
