@@ -9,6 +9,7 @@ export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [todaysTasks, setTodaysTasks] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
+
   const [allTasks, setAllTasks] = useState<{ total: number; completed: number }>({
     total: 0,
     completed: 0
@@ -82,9 +83,9 @@ export default function Dashboard() {
         <h1 className="text-3xl font-bold">Irányítópult</h1>
       </div>
       
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 h-[calc(100%-4rem)] overflow-hidden">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {/* Time Widget */}
-        <Card className="h-fit">
+        <Card className="h-[160px]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pontos idő</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
@@ -97,7 +98,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Date Widget */}
-        <Card className="h-fit bg-black text-white">
+        <Card className="h-[160px] bg-black text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Dátum</CardTitle>
             <CalendarIcon className="h-4 w-4" />
@@ -110,7 +111,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Monthly Finance Widget */}
-        <Card className="h-fit">
+        <Card className="h-[160px]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Havi pénzügyek</CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
@@ -128,18 +129,18 @@ export default function Dashboard() {
         </Card>
 
         {/* Today's Tasks Widget */}
-        <Card className="h-fit">
+        <Card className="h-[160px] bg-black text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Mai tennivalók</CardTitle>
-            <ListCheck className="h-4 w-4 text-muted-foreground" />
+            <ListCheck className="h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {todaysTasks.length === 0 ? (
-                <p className="text-muted-foreground">Nincs mai tennivaló</p>
+                <p className="text-muted">Nincs mai tennivaló</p>
               ) : (
                 todaysTasks.map((task) => (
-                  <div key={task.id} className="flex items-center justify-between rounded-lg border p-2">
+                  <div key={task.id} className="flex items-center justify-between rounded-lg border border-white/20 p-2">
                     <span>{task.title}</span>
                   </div>
                 ))
@@ -148,8 +149,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Calendar Widget - Now spans two columns */}
-        <Card className="h-fit md:col-span-2">
+        {/* Calendar Widget - Spans two columns */}
+        <Card className="h-[160px] md:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Naptár</CardTitle>
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
