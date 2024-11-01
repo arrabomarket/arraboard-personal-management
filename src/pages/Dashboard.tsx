@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, ListCheck, Calendar as CalendarIcon, Wallet } from "lucide-react";
-import { format } from "date-fns";
+import { format, startOfWeek, addDays } from "date-fns";
 import { hu } from "date-fns/locale";
-import { Calendar } from "@/components/ui/calendar";
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -77,6 +76,18 @@ export default function Dashboard() {
     .filter(t => t.type === 'expense')
     .reduce((sum, t) => sum + t.amount, 0);
 
+  // Generate week days
+  const startOfCurrentWeek = startOfWeek(currentTime, { locale: hu });
+  const weekDays = Array.from({ length: 7 }).map((_, index) => {
+    const date = addDays(startOfCurrentWeek, index);
+    return {
+      date,
+      dayName: format(date, 'EEEEEE', { locale: hu }),
+      dayNumber: format(date, 'd'),
+      isToday: format(date, 'yyyy-MM-dd') === format(currentTime, 'yyyy-MM-dd')
+    };
+  });
+
   return (
     <div className="h-[calc(100vh-2rem)]">
       <div className="flex items-center justify-between mb-6">
@@ -149,21 +160,26 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Calendar Widget - Spans two columns */}
+        {/* Week Calendar Widget */}
         <Card className="h-[160px] md:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Naptár</CardTitle>
+            <CardTitle className="text-sm font-medium">Heti naptár</CardTitle>
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <Calendar
-              mode="single"
-              selected={currentTime}
-              locale={hu}
-              className="rounded-md border mx-auto"
-              disabled
-              showOutsideDays={false}
-            />
+            <div className="flex justify-between items-center">
+              {weekDays.map((day) => (
+                <div
+                  key={day.date.toString()}
+                  className={`flex flex-col items-center p-2 rounded-lg ${
+                    day.isToday ? 'bg-black text-white' : ''
+                  }`}
+                >
+                  <span className="text-xs font-medium">{day.dayName}</span>
+                  <span className="text-lg font-bold">{day.dayNumber}</span>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
