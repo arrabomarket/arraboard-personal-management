@@ -148,21 +148,8 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Task Summary Widget */}
-        <Card className="h-fit bg-black text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Összesített tennivalók</CardTitle>
-            <ListCheck className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {allTasks.completed}/{allTasks.total} elvégezve
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Calendar Widget */}
-        <Card className="h-fit">
+        {/* Calendar Widget - Now spans two columns */}
+        <Card className="h-fit md:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Naptár</CardTitle>
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
@@ -172,8 +159,9 @@ export default function Dashboard() {
               mode="single"
               selected={currentTime}
               locale={hu}
-              className="rounded-md border"
+              className="rounded-md border mx-auto"
               disabled
+              showOutsideDays={false}
             />
           </CardContent>
         </Card>
