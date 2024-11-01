@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Mobile Menu */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className="md:hidden fixed top-4 right-4 z-50">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon">
@@ -31,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1 overflow-auto">
         <div className="container py-6">
-          <div className="md:ml-0 ml-8">
+          <div className="md:ml-0">
             {children}
           </div>
         </div>

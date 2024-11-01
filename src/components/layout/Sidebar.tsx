@@ -12,6 +12,7 @@ import {
   Target,
   Wallet,
   Lock,
+  Settings as SettingsIcon,
 } from "lucide-react";
 import Logo from "./Logo";
 
@@ -39,6 +40,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     { href: "/links", label: "Linkek", icon: LinkIcon },
     { href: "/calendar", label: "Naptár", icon: Calendar },
     { href: "/passwords", label: "Jelszókezelő", icon: Lock },
+    { href: "/settings", label: "Beállítások", icon: SettingsIcon },
   ];
 
   const handleClick = () => {

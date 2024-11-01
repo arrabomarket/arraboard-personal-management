@@ -13,6 +13,7 @@ import Contacts from "./pages/Contacts";
 import Links from "./pages/Links";
 import Calendar from "./pages/Calendar";
 import Passwords from "./pages/Passwords";
+import Settings from "./pages/Settings";
 
 const App = () => (
   <BrowserRouter>
@@ -35,6 +36,7 @@ const App = () => (
                 <Route path="/links" element={<Links />} />
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/passwords" element={<Passwords />} />
+                <Route path="/settings" element={<Settings />} />
               </Routes>
             </Layout>
           </AuthGuard>
