@@ -40,7 +40,6 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     { href: "/links", label: "Linkek", icon: LinkIcon },
     { href: "/calendar", label: "Naptár", icon: Calendar },
     { href: "/passwords", label: "Jelszókezelő", icon: Lock },
-    { href: "/settings", label: "Beállítások", icon: SettingsIcon },
   ];
 
   const handleClick = () => {
@@ -70,10 +69,19 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           </Link>
         ))}
       </nav>
-      <div className="border-t p-4">
-        <div className="mb-2 px-3 text-sm text-muted-foreground">
+      <div className="border-t p-4 space-y-2">
+        <div className="px-3 text-sm text-muted-foreground">
           Bejelentkezve mint: {currentUser}
         </div>
+        <Link to="/settings" onClick={handleClick}>
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-2"
+          >
+            <SettingsIcon className="h-4 w-4" />
+            Beállítások
+          </Button>
+        </Link>
         <Button
           variant="ghost"
           className="w-full justify-start gap-2"
