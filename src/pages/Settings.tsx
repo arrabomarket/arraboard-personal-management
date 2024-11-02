@@ -11,7 +11,9 @@ import { User } from "@supabase/supabase-js";
 
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
-  const [language, setLanguage] = useState<string>("hu");
+  const [language, setLanguage] = useState<string>(() => 
+    localStorage.getItem("language") || "hu"
+  );
   const { setTheme, theme } = useTheme();
   const { toast } = useToast();
 
@@ -25,14 +27,16 @@ export default function Settings() {
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
+    localStorage.setItem("language", value);
     toast({
-      title: "Nyelv megváltoztatva",
-      description: value === "hu" ? "A nyelv magyarra változott" : "Language changed to English",
+      title: value === "hu" ? "Nyelv megváltoztatva" : "Language changed",
+      description: value === "hu" ? "A nyelv magyarra változott" : "Language set to English",
     });
   };
 
   const handleThemeChange = (checked: boolean) => {
-    setTheme(checked ? "dark" : "light");
+    const newTheme = checked ? "dark" : "light";
+    setTheme(newTheme);
     toast({
       title: checked ? "Sötét mód bekapcsolva" : "Világos mód bekapcsolva",
     });
@@ -100,23 +104,21 @@ export default function Settings() {
           <CardTitle>Impresszum</CardTitle>
         </CardHeader>
         <CardContent className="prose dark:prose-invert max-w-none">
+          <h2 className="text-center mb-4">Impresszum</h2>
           <p>
-            Az oldal üzemeltetője: Arrago Life Hub<br />
-            Székhely: Magyarország<br />
-            Email: info@arrago.hu<br />
-            Adószám: 12345678-1-23
+            <strong>Készítette:</strong> Farkas Attila - ArraboMarket <strong>©</strong> <strong>2024</strong>
           </p>
-          <h3>Adatkezelés</h3>
           <p>
-            Az oldal használata során megadott személyes adatokat bizalmasan kezeljük, 
-            harmadik félnek nem adjuk át. Az adatkezelés az EU GDPR szabályozásának 
-            megfelelően történik.
+            <strong>Web:</strong>{" "}
+            <a href="https://arrabomarket.hu" className="text-primary hover:underline">
+              https://arrabomarket.hu
+            </a>
           </p>
-          <h3>Felelősség kizárása</h3>
           <p>
-            Az oldalon található információk kizárólag tájékoztató jellegűek. 
-            Az üzemeltető nem vállal felelősséget az esetleges hibákért vagy 
-            hiányosságokért, illetve a felhasználásból eredő károkért.
+            <strong>Git:</strong>{" "}
+            <a href="https://github.com/arrabomarket/arraboard.git" className="text-primary hover:underline">
+              https://github.com/arrabomarket/arraboard.git
+            </a>
           </p>
         </CardContent>
       </Card>
