@@ -22,7 +22,6 @@ interface SidebarProps {
 
 export default function Sidebar({ onNavigate }: SidebarProps) {
   const location = useLocation();
-  const currentUser = localStorage.getItem("currentUser");
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
@@ -49,7 +48,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-white">
+    <div className="flex h-full w-64 flex-col border-r bg-white dark:bg-background">
       <div className="p-6">
         <Logo />
       </div>
@@ -59,8 +58,8 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
             <Button
               variant="ghost"
               className={cn(
-                "w-full justify-start gap-2",
-                location.pathname === href && "bg-accent text-white"
+                "w-full justify-start gap-2 hover:bg-black hover:text-white",
+                location.pathname === href && "bg-black text-white"
               )}
             >
               <Icon className="h-4 w-4" />
@@ -70,13 +69,13 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         ))}
       </nav>
       <div className="border-t p-4 space-y-2">
-        <div className="px-3 text-sm text-muted-foreground">
-          Bejelentkezve mint: {currentUser}
-        </div>
         <Link to="/settings" onClick={handleClick}>
           <Button
             variant="ghost"
-            className="w-full justify-start gap-2"
+            className={cn(
+              "w-full justify-start gap-2 hover:bg-black hover:text-white",
+              location.pathname === "/settings" && "bg-black text-white"
+            )}
           >
             <SettingsIcon className="h-4 w-4" />
             Beállítások
@@ -84,7 +83,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2"
+          className="w-full justify-start gap-2 hover:bg-black hover:text-white"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />

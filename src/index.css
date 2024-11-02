@@ -51,9 +51,9 @@
 }
 
 .sidebar-link {
-  @apply flex items-center gap-3 px-4 py-2 text-muted-foreground hover:bg-muted transition-colors rounded-md;
+  @apply flex items-center gap-3 px-4 py-2 text-muted-foreground hover:bg-black hover:text-white transition-colors rounded-md;
 }
 
 .sidebar-link.active {
-  @apply bg-primary text-primary-foreground;
+  @apply bg-black text-white;
 }

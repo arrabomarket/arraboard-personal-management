@@ -9,8 +9,14 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { User } from "@supabase/supabase-js";
 
+interface Profile {
+  username: string;
+  created_at: string;
+}
+
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [language, setLanguage] = useState<string>(() => 
     localStorage.getItem("language") || "hu"
   );
@@ -18,16 +24,25 @@ export default function Settings() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const getUser = async () => {
+    const fetchUserAndProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      if (user) {
+        setUser(user);
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username, created_at')
+          .eq('id', user.id)
+          .single();
+        if (profile) setProfile(profile);
+      }
     };
-    getUser();
+    fetchUserAndProfile();
   }, []);
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
     localStorage.setItem("language", value);
+    document.documentElement.lang = value;
     toast({
       title: value === "hu" ? "Nyelv megváltoztatva" : "Language changed",
       description: value === "hu" ? "A nyelv magyarra változott" : "Language set to English",
@@ -42,23 +57,71 @@ export default function Settings() {
     });
   };
 
+  const t = (key: string) => {
+    const translations: Record<string, Record<string, string>> = {
+      "userSettings": {
+        "hu": "Felhasználói adatok",
+        "en": "User Information"
+      },
+      "email": {
+        "hu": "Email cím",
+        "en": "Email Address"
+      },
+      "username": {
+        "hu": "Felhasználónév",
+        "en": "Username"
+      },
+      "memberSince": {
+        "hu": "Regisztráció dátuma",
+        "en": "Member Since"
+      },
+      "appearance": {
+        "hu": "Megjelenés",
+        "en": "Appearance"
+      },
+      "darkMode": {
+        "hu": "Sötét mód",
+        "en": "Dark Mode"
+      },
+      "language": {
+        "hu": "Nyelv",
+        "en": "Language"
+      },
+      "hungarian": {
+        "hu": "Magyar",
+        "en": "Hungarian"
+      },
+      "english": {
+        "hu": "Angol",
+        "en": "English"
+      }
+    };
+    return translations[key]?.[language] || key;
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Beállítások</h1>
+      <h1 className="text-3xl font-bold">{t("userSettings")}</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Felhasználói adatok</CardTitle>
+          <CardTitle>{t("userSettings")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Email cím</Label>
+              <Label>{t("email")}</Label>
               <p className="text-muted-foreground">{user?.email}</p>
             </div>
             <div>
-              <Label>Felhasználónév</Label>
-              <p className="text-muted-foreground">{user?.user_metadata?.username || "Nincs megadva"}</p>
+              <Label>{t("username")}</Label>
+              <p className="text-muted-foreground">{profile?.username}</p>
+            </div>
+            <div>
+              <Label>{t("memberSince")}</Label>
+              <p className="text-muted-foreground">
+                {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : ''}
+              </p>
             </div>
           </div>
         </CardContent>
@@ -66,15 +129,12 @@ export default function Settings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Megjelenés</CardTitle>
+          <CardTitle>{t("appearance")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>Sötét mód</Label>
-              <p className="text-sm text-muted-foreground">
-                A felület sötét/világos megjelenítése
-              </p>
+              <Label>{t("darkMode")}</Label>
             </div>
             <Switch
               checked={theme === "dark"}
@@ -85,14 +145,14 @@ export default function Settings() {
           <Separator className="my-4" />
           
           <div className="space-y-2">
-            <Label>Nyelv</Label>
+            <Label>{t("language")}</Label>
             <Select value={language} onValueChange={handleLanguageChange}>
               <SelectTrigger>
-                <SelectValue placeholder="Válassz nyelvet" />
+                <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="hu">Magyar</SelectItem>
-                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="hu">{t("hungarian")}</SelectItem>
+                <SelectItem value="en">{t("english")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
