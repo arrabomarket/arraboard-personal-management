@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { useTheme } from "next-themes";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 
@@ -16,8 +13,6 @@ interface Profile {
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const { setTheme, theme } = useTheme();
-  const { toast } = useToast();
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
@@ -34,14 +29,6 @@ export default function Settings() {
     };
     fetchUserAndProfile();
   }, []);
-
-  const handleThemeChange = (checked: boolean) => {
-    const newTheme = checked ? "dark" : "light";
-    setTheme(newTheme);
-    toast({
-      title: checked ? "Sötét mód bekapcsolva" : "Világos mód bekapcsolva",
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -73,26 +60,9 @@ export default function Settings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Megjelenés</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label>Sötét mód</Label>
-            </div>
-            <Switch
-              checked={theme === "dark"}
-              onCheckedChange={handleThemeChange}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
           <CardTitle>Impresszum</CardTitle>
         </CardHeader>
-        <CardContent className="prose dark:prose-invert max-w-none">
+        <CardContent className="prose max-w-none">
           <h2 className="text-center mb-4">Impresszum</h2>
           <p>
             <strong>Készítette:</strong> Farkas Attila - ArraboMarket <strong>©</strong> <strong>2024</strong>
