@@ -1,19 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Calendar,
   Contact2,
   FileText,
   Home,
   Link as LinkIcon,
+  Lock,
   LogOut,
   ScrollText,
+  Settings as SettingsIcon,
   Target,
   Wallet,
-  Lock,
-  Settings as SettingsIcon,
 } from "lucide-react";
 import Logo from "./Logo";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +23,6 @@ interface SidebarProps {
 
 export default function Sidebar({ onNavigate }: SidebarProps) {
   const location = useLocation();
-  const { t } = useLanguage();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -32,15 +30,15 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   const links = [
-    { href: "/", label: t("overview"), icon: Home },
-    { href: "/tasks", label: t("tasks"), icon: Target },
-    { href: "/notes", label: t("notes"), icon: FileText },
-    { href: "/finance", label: t("finance"), icon: Wallet },
-    { href: "/projects", label: t("projects"), icon: ScrollText },
-    { href: "/contacts", label: t("contacts"), icon: Contact2 },
-    { href: "/links", label: t("links"), icon: LinkIcon },
-    { href: "/calendar", label: t("calendar"), icon: Calendar },
-    { href: "/passwords", label: t("passwords"), icon: Lock },
+    { href: "/", label: "Áttekintés", icon: Home },
+    { href: "/tasks", label: "Tennivalók", icon: Target },
+    { href: "/notes", label: "Jegyzetek", icon: FileText },
+    { href: "/finance", label: "Pénzügyek", icon: Wallet },
+    { href: "/projects", label: "Projektek", icon: ScrollText },
+    { href: "/contacts", label: "Kapcsolatok", icon: Contact2 },
+    { href: "/links", label: "Linkek", icon: LinkIcon },
+    { href: "/calendar", label: "Naptár", icon: Calendar },
+    { href: "/passwords", label: "Jelszókezelő", icon: Lock },
   ];
 
   const handleClick = () => {
@@ -50,46 +48,44 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className="flex h-full w-64 flex-col border-r bg-white dark:bg-background">
-      <div className="p-6">
+    <div className="flex h-full flex-col gap-4">
+      <div className="flex h-14 items-center px-4">
         <Logo />
       </div>
-      <nav className="flex-1 space-y-1 px-3 py-2">
-        {links.map(({ href, label, icon: Icon }) => (
-          <Link key={href} to={href} onClick={handleClick}>
-            <Button
-              variant="ghost"
-              className={cn(
-                "w-full justify-start gap-2 hover:bg-black hover:text-white",
-                location.pathname === href && "bg-black text-white"
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </Button>
+      <div className="flex-1 space-y-2 px-4">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            to={link.href}
+            onClick={handleClick}
+            className={cn("sidebar-link", {
+              active: location.pathname === link.href,
+            })}
+          >
+            <link.icon className="h-4 w-4" />
+            {link.label}
           </Link>
         ))}
-      </nav>
-      <div className="border-t p-4 space-y-2">
+      </div>
+      <div className="mt-auto space-y-2 px-4 pb-4">
         <Link to="/settings" onClick={handleClick}>
           <Button
             variant="ghost"
-            className={cn(
-              "w-full justify-start gap-2 hover:bg-black hover:text-white",
-              location.pathname === "/settings" && "bg-black text-white"
-            )}
+            className={cn("w-full justify-start gap-2", {
+              "bg-black text-white": location.pathname === "/settings",
+            })}
           >
             <SettingsIcon className="h-4 w-4" />
-            {t("settings")}
+            Beállítások
           </Button>
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2 hover:bg-black hover:text-white"
+          className="w-full justify-start gap-2"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
-          {t("logout")}
+          Kijelentkezés
         </Button>
       </div>
     </div>

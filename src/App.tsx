@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
-import { LanguageProvider } from "./contexts/LanguageContext";
 import Layout from "./components/layout/Layout";
 import AuthGuard from "./components/layout/AuthGuard";
 import Login from "./pages/Login";
@@ -19,36 +18,34 @@ import Settings from "./pages/Settings";
 
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-    <LanguageProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route
-            path="/*"
-            element={
-              <AuthGuard>
-                <Layout>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/tasks" element={<Tasks />} />
-                    <Route path="/notes" element={<Notes />} />
-                    <Route path="/finance" element={<Finance />} />
-                    <Route path="/projects" element={<Projects />} />
-                    <Route path="/contacts" element={<Contacts />} />
-                    <Route path="/links" element={<Links />} />
-                    <Route path="/calendar" element={<Calendar />} />
-                    <Route path="/passwords" element={<Passwords />} />
-                    <Route path="/settings" element={<Settings />} />
-                  </Routes>
-                </Layout>
-              </AuthGuard>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </LanguageProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route
+          path="/*"
+          element={
+            <AuthGuard>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/tasks" element={<Tasks />} />
+                  <Route path="/notes" element={<Notes />} />
+                  <Route path="/finance" element={<Finance />} />
+                  <Route path="/projects" element={<Projects />} />
+                  <Route path="/contacts" element={<Contacts />} />
+                  <Route path="/links" element={<Links />} />
+                  <Route path="/calendar" element={<Calendar />} />
+                  <Route path="/passwords" element={<Passwords />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
+              </Layout>
+            </AuthGuard>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   </ThemeProvider>
 );
 

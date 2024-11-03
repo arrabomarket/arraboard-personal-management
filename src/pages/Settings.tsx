@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { User } from "@supabase/supabase-js";
 
 interface Profile {
@@ -19,7 +17,6 @@ export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const { setTheme, theme } = useTheme();
-  const { language, setLanguage, t } = useLanguage();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -38,14 +35,6 @@ export default function Settings() {
     fetchUserAndProfile();
   }, []);
 
-  const handleLanguageChange = (value: string) => {
-    setLanguage(value);
-    toast({
-      title: value === "hu" ? "Nyelv megváltoztatva" : "Language changed",
-      description: value === "hu" ? "A nyelv magyarra változott" : "Language set to English",
-    });
-  };
-
   const handleThemeChange = (checked: boolean) => {
     const newTheme = checked ? "dark" : "light";
     setTheme(newTheme);
@@ -56,24 +45,24 @@ export default function Settings() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{t("settings")}</h1>
+      <h1 className="text-3xl font-bold">Beállítások</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("userSettings")}</CardTitle>
+          <CardTitle>Felhasználói adatok</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>{t("email")}</Label>
+              <Label>Email cím</Label>
               <p className="text-muted-foreground">{user?.email}</p>
             </div>
             <div>
-              <Label>{t("username")}</Label>
+              <Label>Felhasználónév</Label>
               <p className="text-muted-foreground">{profile?.username}</p>
             </div>
             <div>
-              <Label>{t("memberSince")}</Label>
+              <Label>Regisztráció dátuma</Label>
               <p className="text-muted-foreground">
                 {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : ''}
               </p>
@@ -84,32 +73,17 @@ export default function Settings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t("appearance")}</CardTitle>
+          <CardTitle>Megjelenés</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>{t("darkMode")}</Label>
+              <Label>Sötét mód</Label>
             </div>
             <Switch
               checked={theme === "dark"}
               onCheckedChange={handleThemeChange}
             />
-          </div>
-          
-          <Separator className="my-4" />
-          
-          <div className="space-y-2">
-            <Label>{t("language")}</Label>
-            <Select value={language} onValueChange={handleLanguageChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="hu">{t("hungarian")}</SelectItem>
-                <SelectItem value="en">{t("english")}</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </CardContent>
       </Card>
