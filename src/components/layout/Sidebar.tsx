@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Calendar,
   Contact2,
@@ -15,6 +16,7 @@ import {
   Settings as SettingsIcon,
 } from "lucide-react";
 import Logo from "./Logo";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SidebarProps {
   onNavigate?: () => void;
@@ -22,23 +24,23 @@ interface SidebarProps {
 
 export default function Sidebar({ onNavigate }: SidebarProps) {
   const location = useLocation();
+  const { t } = useLanguage();
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("currentUser");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     window.location.href = "/login";
   };
 
   const links = [
-    { href: "/", label: "Áttekintés", icon: Home },
-    { href: "/tasks", label: "Tennivalók", icon: Target },
-    { href: "/notes", label: "Jegyzetek", icon: FileText },
-    { href: "/finance", label: "Pénzügyek", icon: Wallet },
-    { href: "/projects", label: "Projektek", icon: ScrollText },
-    { href: "/contacts", label: "Kapcsolatok", icon: Contact2 },
-    { href: "/links", label: "Linkek", icon: LinkIcon },
-    { href: "/calendar", label: "Naptár", icon: Calendar },
-    { href: "/passwords", label: "Jelszókezelő", icon: Lock },
+    { href: "/", label: t("overview"), icon: Home },
+    { href: "/tasks", label: t("tasks"), icon: Target },
+    { href: "/notes", label: t("notes"), icon: FileText },
+    { href: "/finance", label: t("finance"), icon: Wallet },
+    { href: "/projects", label: t("projects"), icon: ScrollText },
+    { href: "/contacts", label: t("contacts"), icon: Contact2 },
+    { href: "/links", label: t("links"), icon: LinkIcon },
+    { href: "/calendar", label: t("calendar"), icon: Calendar },
+    { href: "/passwords", label: t("passwords"), icon: Lock },
   ];
 
   const handleClick = () => {
@@ -78,7 +80,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
             )}
           >
             <SettingsIcon className="h-4 w-4" />
-            Beállítások
+            {t("settings")}
           </Button>
         </Link>
         <Button
@@ -87,7 +89,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
-          Kijelentkezés
+          {t("logout")}
         </Button>
       </div>
     </div>

@@ -4,9 +4,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
-import { supabase } from "@/integrations/supabase/client";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { User } from "@supabase/supabase-js";
 
 interface Profile {
@@ -17,10 +18,8 @@ interface Profile {
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [language, setLanguage] = useState<string>(() => 
-    localStorage.getItem("language") || "hu"
-  );
   const { setTheme, theme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -41,8 +40,6 @@ export default function Settings() {
 
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
-    localStorage.setItem("language", value);
-    document.documentElement.lang = value;
     toast({
       title: value === "hu" ? "Nyelv megváltoztatva" : "Language changed",
       description: value === "hu" ? "A nyelv magyarra változott" : "Language set to English",
@@ -57,51 +54,9 @@ export default function Settings() {
     });
   };
 
-  const t = (key: string) => {
-    const translations: Record<string, Record<string, string>> = {
-      "userSettings": {
-        "hu": "Felhasználói adatok",
-        "en": "User Information"
-      },
-      "email": {
-        "hu": "Email cím",
-        "en": "Email Address"
-      },
-      "username": {
-        "hu": "Felhasználónév",
-        "en": "Username"
-      },
-      "memberSince": {
-        "hu": "Regisztráció dátuma",
-        "en": "Member Since"
-      },
-      "appearance": {
-        "hu": "Megjelenés",
-        "en": "Appearance"
-      },
-      "darkMode": {
-        "hu": "Sötét mód",
-        "en": "Dark Mode"
-      },
-      "language": {
-        "hu": "Nyelv",
-        "en": "Language"
-      },
-      "hungarian": {
-        "hu": "Magyar",
-        "en": "Hungarian"
-      },
-      "english": {
-        "hu": "Angol",
-        "en": "English"
-      }
-    };
-    return translations[key]?.[language] || key;
-  };
-
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">{t("userSettings")}</h1>
+      <h1 className="text-3xl font-bold">{t("settings")}</h1>
 
       <Card>
         <CardHeader>
