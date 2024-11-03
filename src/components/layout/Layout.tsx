@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen bg-background">
       {/* Desktop Sidebar */}
-      <div className="hidden md:block border-r border-[#f3f3f3]">
+      <div className="hidden md:block">
         <Sidebar />
       </div>
 

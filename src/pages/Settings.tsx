@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { useTheme } from "next-themes";
 import { supabase } from "@/integrations/supabase/client";
+import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/components/ui/use-toast";
 import { User } from "@supabase/supabase-js";
 
 interface Profile {
@@ -13,6 +17,11 @@ interface Profile {
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [language, setLanguage] = useState<string>(() => 
+    localStorage.getItem("language") || "hu"
+  );
+  const { setTheme, theme } = useTheme();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchUserAndProfile = async () => {
@@ -30,26 +39,86 @@ export default function Settings() {
     fetchUserAndProfile();
   }, []);
 
+  const handleLanguageChange = (value: string) => {
+    setLanguage(value);
+    localStorage.setItem("language", value);
+    document.documentElement.lang = value;
+    toast({
+      title: value === "hu" ? "Nyelv megváltoztatva" : "Language changed",
+      description: value === "hu" ? "A nyelv magyarra változott" : "Language set to English",
+    });
+  };
+
+  const handleThemeChange = (checked: boolean) => {
+    const newTheme = checked ? "dark" : "light";
+    setTheme(newTheme);
+    toast({
+      title: checked ? "Sötét mód bekapcsolva" : "Világos mód bekapcsolva",
+    });
+  };
+
+  const t = (key: string) => {
+    const translations: Record<string, Record<string, string>> = {
+      "userSettings": {
+        "hu": "Felhasználói adatok",
+        "en": "User Information"
+      },
+      "email": {
+        "hu": "Email cím",
+        "en": "Email Address"
+      },
+      "username": {
+        "hu": "Felhasználónév",
+        "en": "Username"
+      },
+      "memberSince": {
+        "hu": "Regisztráció dátuma",
+        "en": "Member Since"
+      },
+      "appearance": {
+        "hu": "Megjelenés",
+        "en": "Appearance"
+      },
+      "darkMode": {
+        "hu": "Sötét mód",
+        "en": "Dark Mode"
+      },
+      "language": {
+        "hu": "Nyelv",
+        "en": "Language"
+      },
+      "hungarian": {
+        "hu": "Magyar",
+        "en": "Hungarian"
+      },
+      "english": {
+        "hu": "Angol",
+        "en": "English"
+      }
+    };
+    return translations[key]?.[language] || key;
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Beállítások</h1>
+      <h1 className="text-3xl font-bold">{t("userSettings")}</h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Felhasználói adatok</CardTitle>
+          <CardTitle>{t("userSettings")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Email cím</Label>
+              <Label>{t("email")}</Label>
               <p className="text-muted-foreground">{user?.email}</p>
             </div>
             <div>
-              <Label>Felhasználónév</Label>
+              <Label>{t("username")}</Label>
               <p className="text-muted-foreground">{profile?.username}</p>
             </div>
             <div>
-              <Label>Regisztráció dátuma</Label>
+              <Label>{t("memberSince")}</Label>
               <p className="text-muted-foreground">
                 {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : ''}
               </p>
@@ -60,9 +129,41 @@ export default function Settings() {
 
       <Card>
         <CardHeader>
+          <CardTitle>{t("appearance")}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label>{t("darkMode")}</Label>
+            </div>
+            <Switch
+              checked={theme === "dark"}
+              onCheckedChange={handleThemeChange}
+            />
+          </div>
+          
+          <Separator className="my-4" />
+          
+          <div className="space-y-2">
+            <Label>{t("language")}</Label>
+            <Select value={language} onValueChange={handleLanguageChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hu">{t("hungarian")}</SelectItem>
+                <SelectItem value="en">{t("english")}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Impresszum</CardTitle>
         </CardHeader>
-        <CardContent className="prose max-w-none">
+        <CardContent className="prose dark:prose-invert max-w-none">
           <h2 className="text-center mb-4">Impresszum</h2>
           <p>
             <strong>Készítette:</strong> Farkas Attila - ArraboMarket <strong>©</strong> <strong>2024</strong>

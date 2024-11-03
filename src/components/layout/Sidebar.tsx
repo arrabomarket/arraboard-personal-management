@@ -7,15 +7,14 @@ import {
   FileText,
   Home,
   Link as LinkIcon,
-  Lock,
   LogOut,
   ScrollText,
-  Settings as SettingsIcon,
   Target,
   Wallet,
+  Lock,
+  Settings as SettingsIcon,
 } from "lucide-react";
 import Logo from "./Logo";
-import { supabase } from "@/integrations/supabase/client";
 
 interface SidebarProps {
   onNavigate?: () => void;
@@ -24,8 +23,9 @@ interface SidebarProps {
 export default function Sidebar({ onNavigate }: SidebarProps) {
   const location = useLocation();
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("currentUser");
     window.location.href = "/login";
   };
 
@@ -48,32 +48,34 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className="flex h-full flex-col gap-4">
-      <div className="flex h-14 items-center px-4">
+    <div className="flex h-full w-64 flex-col border-r bg-white dark:bg-background">
+      <div className="p-6">
         <Logo />
       </div>
-      <div className="flex-1 space-y-2 px-4">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            to={link.href}
-            onClick={handleClick}
-            className={cn("sidebar-link", {
-              active: location.pathname === link.href,
-            })}
-          >
-            <link.icon className="h-4 w-4" />
-            {link.label}
+      <nav className="flex-1 space-y-1 px-3 py-2">
+        {links.map(({ href, label, icon: Icon }) => (
+          <Link key={href} to={href} onClick={handleClick}>
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start gap-2 hover:bg-black hover:text-white",
+                location.pathname === href && "bg-black text-white"
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+            </Button>
           </Link>
         ))}
-      </div>
-      <div className="mt-auto space-y-2 px-4 pb-4">
+      </nav>
+      <div className="border-t p-4 space-y-2">
         <Link to="/settings" onClick={handleClick}>
           <Button
             variant="ghost"
-            className={cn("w-full justify-start gap-2", {
-              "bg-black text-white": location.pathname === "/settings",
-            })}
+            className={cn(
+              "w-full justify-start gap-2 hover:bg-black hover:text-white",
+              location.pathname === "/settings" && "bg-black text-white"
+            )}
           >
             <SettingsIcon className="h-4 w-4" />
             Beállítások
@@ -81,7 +83,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2"
+          className="w-full justify-start gap-2 hover:bg-black hover:text-white"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
