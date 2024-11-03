@@ -48,7 +48,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className="flex h-full w-64 flex-col bg-[#090909] border-r border-[#f3f3f3]">
+    <div className="flex h-full w-64 flex-col border-r bg-white dark:bg-background">
       <div className="p-6">
         <Logo />
       </div>
@@ -58,8 +58,8 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
             <Button
               variant="ghost"
               className={cn(
-                "w-full justify-start gap-2 text-white hover:bg-white/10",
-                location.pathname === href && "bg-white/10"
+                "w-full justify-start gap-2 hover:bg-black hover:text-white",
+                location.pathname === href && "bg-black text-white"
               )}
             >
               <Icon className="h-4 w-4" />
@@ -68,13 +68,13 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           </Link>
         ))}
       </nav>
-      <div className="border-t border-[#f3f3f3] p-4 space-y-2">
+      <div className="border-t p-4 space-y-2">
         <Link to="/settings" onClick={handleClick}>
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-start gap-2 text-white hover:bg-white/10",
-              location.pathname === "/settings" && "bg-white/10"
+              "w-full justify-start gap-2 hover:bg-black hover:text-white",
+              location.pathname === "/settings" && "bg-black text-white"
             )}
           >
             <SettingsIcon className="h-4 w-4" />
@@ -83,7 +83,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2 text-white hover:bg-white/10"
+          className="w-full justify-start gap-2 hover:bg-black hover:text-white"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
