@@ -50,6 +50,9 @@ export default function Subscriptions() {
   const { data: subscriptions, isLoading } = useQuery({
     queryKey: ["subscriptions"],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
       const { data, error } = await supabase
         .from("subscriptions")
         .select("*")
@@ -69,11 +72,18 @@ export default function Subscriptions() {
     }
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Nincs bejelentkezett felhasználó!");
+        return;
+      }
+
       const { error } = await supabase.from("subscriptions").insert({
         name,
         url,
         expiry_date: expiryDate.toISOString(),
         amount: parseFloat(amount),
+        user_id: user.id,
       });
 
       if (error) throw error;
