@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +58,12 @@ export default function Login() {
             Bejelentkezés
           </Button>
         </form>
+        <div className="text-center text-sm mt-4">
+          Ha nem regisztrált még, itt megteheti: {" "}
+          <Link to="/register" className="font-bold text-primary hover:underline">
+            Regisztráció
+          </Link>
+        </div>
       </div>
     </div>
   );
