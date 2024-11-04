@@ -47,7 +47,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className="flex h-full w-64 flex-col bg-[#090909] text-white">
+    <div className="flex h-full w-64 flex-col bg-white text-black">
       <div className="p-6">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -73,16 +73,6 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           <g clipPath="url(#ecfc5e34b5)">
             <path fill="#00b2a2" d="M 116.65625 15.117188 L 120.648438 11.738281 C 117.582031 9.085938 113.585938 7.472656 109.222656 7.472656 C 99.574219 7.472656 91.726562 15.320312 91.726562 24.964844 L 96.863281 24.964844 C 96.863281 18.152344 102.40625 12.609375 109.222656 12.609375 C 112.011719 12.609375 114.585938 13.550781 116.65625 15.117188 Z M 116.65625 15.117188" fillOpacity="1" fillRule="nonzero" />
           </g>
-          <g fill="#FFFFFF" fillOpacity="1">
-            <g transform="translate(4.649639, 24.783597)">
-              <path d="M 9.4375 -2.34375 L 4.484375 -2.34375 L 3.6875 0 L 0.296875 0 L 5.109375 -13.28125 L 8.859375 -13.28125 L 13.65625 0 L 10.234375 0 Z M 8.609375 -4.84375 L 6.96875 -9.703125 L 5.34375 -4.84375 Z M 8.609375 -4.84375" />
-            </g>
-          </g>
-          <g fill="#FFFFFF" fillOpacity="1">
-            <g transform="translate(18.584082, 24.783597)">
-              <path d="M 4.40625 -8.796875 C 4.78125 -9.378906 5.25 -9.835938 5.8125 -10.171875 C 6.382812 -10.503906 7.019531 -10.671875 7.71875 -10.671875 L 7.71875 -7.25 L 6.828125 -7.25 C 6.023438 -7.25 5.421875 -7.070312 5.015625 -6.71875 C 4.609375 -6.375 4.40625 -5.769531 4.40625 -4.90625 L 4.40625 0 L 1.171875 0 L 1.171875 -10.5625 L 4.40625 -10.5625 Z M 4.40625 -8.796875" />
-            </g>
-          </g>
         </svg>
       </div>
       <nav className="flex-1 space-y-1 px-3 py-2">
@@ -91,8 +81,8 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
             <Button
               variant="ghost"
               className={cn(
-                "w-full justify-start gap-2 text-white hover:bg-white/10",
-                location.pathname === href && "bg-white/10"
+                "w-full justify-start gap-2 text-black hover:bg-gray-200",
+                location.pathname === href && "bg-gray-200"
               )}
             >
               <Icon className="h-4 w-4" />
@@ -101,13 +91,13 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           </Link>
         ))}
       </nav>
-      <div className="border-t border-white/10 p-4 space-y-2">
+      <div className="border-t border-black/10 p-4 space-y-2">
         <Link to="/settings" onClick={handleClick}>
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-start gap-2 text-white hover:bg-white/10",
-              location.pathname === "/settings" && "bg-white/10"
+              "w-full justify-start gap-2 text-black hover:bg-gray-200",
+              location.pathname === "/settings" && "bg-gray-200"
             )}
           >
             <SettingsIcon className="h-4 w-4" />
@@ -116,7 +106,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2 text-white hover:bg-white/10"
+          className="w-full justify-start gap-2 text-black hover:bg-gray-200"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4" />
