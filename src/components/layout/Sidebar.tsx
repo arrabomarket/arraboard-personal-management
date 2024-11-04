@@ -31,7 +31,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   const links = [
-    { href: "/", label: "Áttekintés", icon: Home },
+    { href: "/", label: "Irányítópult", icon: Home },
     { href: "/tasks", label: "Tennivalók", icon: Target },
     { href: "/notes", label: "Jegyzetek", icon: FileText },
     { href: "/finance", label: "Pénzügyek", icon: Wallet },
