@@ -10,10 +10,7 @@ export default function Settings() {
           <CardTitle>Impresszum</CardTitle>
         </CardHeader>
         <CardContent className="prose dark:prose-invert max-w-none">
-          <h2 className="text-center mb-4">Impresszum</h2>
-          <p>
-            <strong>Készítette:</strong> Farkas Attila - ArraboMarket <strong>©</strong> <strong>2024</strong>
-          </p>
+          <p><strong>Készítete:</strong> Farkas Attila - ArraboMarket</p>
           <p>
             <strong>Web:</strong>{" "}
             <a href="https://arrabomarket.hu" className="text-primary hover:underline">
@@ -21,11 +18,23 @@ export default function Settings() {
             </a>
           </p>
           <p>
-            <strong>Git:</strong>{" "}
-            <a href="https://github.com/arrabomarket/arraboard.git" className="text-primary hover:underline">
-              https://github.com/arrabomarket/arraboard.git
+            <strong>GitHub:</strong>{" "}
+            <a href="https://github.com/arrabomarket/arraboard-personal-management" className="text-primary hover:underline">
+              https://github.com/arrabomarket/arraboard-personal-management
             </a>
           </p>
+          <p><strong>Adatbázis</strong>: SupaBase</p>
+          <p><strong>Felhasznált technikák:</strong></p>
+          <ul className="list-disc pl-6 space-y-1">
+            <li>Vite</li>
+            <li>TypeScript</li>
+            <li>React</li>
+            <li>shadcn-ui</li>
+            <li>Tailwind CSS</li>
+          </ul>
+          <p><strong>Segítség:</strong> GPT Engineer</p>
+          <p><strong>Licensz:</strong> GPT Engineer</p>
+          <p><strong>©2024</strong></p>
         </CardContent>
       </Card>
     </div>
