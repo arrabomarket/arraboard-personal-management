@@ -222,6 +222,44 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          amount: number
+          created_at: string
+          expiry_date: string
+          id: string
+          name: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          expiry_date: string
+          id?: string
+          name: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          expiry_date?: string
+          id?: string
+          name?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           category_id: string | null
