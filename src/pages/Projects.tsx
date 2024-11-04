@@ -1,57 +1,68 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { DndContext, DragEndEvent, closestCorners } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
-import KanbanBoard from "@/components/projects/KanbanBoard";
+import { Button } from "@/components/ui/button";
+import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import KanbanColumn from "@/components/projects/KanbanColumn";
 
-interface Project {
+interface Task {
   id: string;
-  title: string;
+  content: string;
+  status: "todo" | "inProgress" | "done";
 }
 
 export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [newProjectTitle, setNewProjectTitle] = useState("");
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTask, setNewTask] = useState("");
 
-  // Load projects and tasks from localStorage on component mount
-  useEffect(() => {
-    const savedProjects = localStorage.getItem("projects");
-    const savedTasks = localStorage.getItem("projectTasks");
-    if (savedProjects) {
-      setProjects(JSON.parse(savedProjects));
+  const columns = [
+    { id: "todo", title: "Tennivalók" },
+    { id: "inProgress", title: "Folyamatban" },
+    { id: "done", title: "Kész" },
+  ];
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const activeTask = tasks.find((task) => task.id === active.id);
+    const overColumn = over.id;
+
+    if (activeTask && typeof overColumn === "string") {
+      setTasks(
+        tasks.map((task) =>
+          task.id === activeTask.id
+            ? { ...task, status: overColumn as Task["status"] }
+            : task
+        )
+      );
     }
-  }, []);
-
-  // Save projects to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("projects", JSON.stringify(projects));
-  }, [projects]);
-
-  const handleAddProject = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newProjectTitle.trim()) {
-      toast.error("A projekt neve nem lehet üres!");
-      return;
-    }
-    
-    const project: Project = {
-      id: crypto.randomUUID(),
-      title: newProjectTitle.trim(),
-    };
-    
-    setProjects([...projects, project]);
-    setNewProjectTitle("");
-    toast.success("Projekt sikeresen hozzáadva!");
   };
 
-  const handleDeleteProject = (projectId: string) => {
-    setProjects(projects.filter(project => project.id !== projectId));
-    // Töröljük a projekthez tartozó feladatokat is
-    const savedTasks = JSON.parse(localStorage.getItem("projectTasks") || "{}");
-    delete savedTasks[projectId];
-    localStorage.setItem("projectTasks", JSON.stringify(savedTasks));
-    toast.success("Projekt sikeresen törölve!");
+  const handleAddTask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTask.trim()) {
+      toast.error("A feladat neve nem lehet üres!");
+      return;
+    }
+
+    const task: Task = {
+      id: crypto.randomUUID(),
+      content: newTask.trim(),
+      status: "todo",
+    };
+
+    setTasks([...tasks, task]);
+    setNewTask("");
+    toast.success("Feladat sikeresen hozzáadva!");
+  };
+
+  const clearDoneTasks = () => {
+    setTasks(tasks.filter((task) => task.status !== "done"));
+    toast.success("Befejezett feladatok törölve!");
   };
 
   return (
@@ -60,11 +71,11 @@ export default function Projects() {
         <h1 className="text-3xl font-bold">Projektek</h1>
       </div>
 
-      <form onSubmit={handleAddProject} className="flex gap-4">
+      <form onSubmit={handleAddTask} className="flex gap-4">
         <Input
-          placeholder="Új projekt neve..."
-          value={newProjectTitle}
-          onChange={(e) => setNewProjectTitle(e.target.value)}
+          placeholder="Új feladat..."
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
           className="max-w-sm"
         />
         <Button type="submit">
@@ -73,16 +84,20 @@ export default function Projects() {
         </Button>
       </form>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => (
-          <KanbanBoard
-            key={project.id}
-            id={project.id}
-            title={project.title}
-            onDelete={handleDeleteProject}
-          />
-        ))}
-      </div>
+      <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {columns.map((column) => (
+            <KanbanColumn
+              key={column.id}
+              id={column.id}
+              title={column.title}
+              tasks={tasks.filter((task) => task.status === column.id)}
+              showClearButton={column.id === "done"}
+              onClear={clearDoneTasks}
+            />
+          ))}
+        </div>
+      </DndContext>
     </div>
   );
 }
