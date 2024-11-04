@@ -53,7 +53,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     <div className="flex h-full w-64 flex-col bg-white text-black">
       <div className="p-6">
         <div className="flex items-center gap-2">
-          <Grid3x3 className="h-8 w-8 text-black" />
+          <Grid3x3 className="h-8 w-8 text-primary" />
           <span className="font-bold text-xl tracking-tight">ArraBoard</span>
         </div>
       </div>
@@ -67,23 +67,23 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                 location.pathname === href && "bg-[#222222] text-white"
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-4 w-4 text-primary" />
               {label}
             </Button>
           </Link>
         ))}
       </nav>
       <div className="border-t border-black/10 p-4 space-y-2">
-        <Link to="/settings" onClick={handleClick}>
+        <Link to="/impresszum" onClick={handleClick}>
           <Button
             variant="ghost"
             className={cn(
               "w-full justify-start gap-2 text-black hover:bg-gray-200",
-              location.pathname === "/settings" && "bg-gray-200"
+              location.pathname === "/impresszum" && "bg-gray-200"
             )}
           >
-            <SettingsIcon className="h-4 w-4" />
-            Beállítások
+            <SettingsIcon className="h-4 w-4 text-primary" />
+            Impresszum
           </Button>
         </Link>
         <Button
@@ -91,7 +91,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           className="w-full justify-start gap-2 text-black hover:bg-gray-200"
           onClick={handleLogout}
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-4 w-4 text-primary" />
           Kijelentkezés
         </Button>
       </div>

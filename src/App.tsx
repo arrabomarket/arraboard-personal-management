@@ -41,7 +41,7 @@ const App = () => (
                   <Route path="/links" element={<Links />} />
                   <Route path="/calendar" element={<Calendar />} />
                   <Route path="/passwords" element={<Passwords />} />
-                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/impresszum" element={<Settings />} />
                   <Route path="/subscriptions" element={<Subscriptions />} />
                 </Routes>
               </Layout>

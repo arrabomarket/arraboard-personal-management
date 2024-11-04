@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export default function Settings() {
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Beállítások</h1>
+      <h1 className="text-3xl font-bold">Impresszum</h1>
 
       <Card>
         <CardHeader>
