@@ -43,7 +43,7 @@ export default function Settings() {
             <li>Tailwind CSS</li>
           </ul>
           <p><strong>Segítség:</strong> GPT Engineer</p>
-          <p><strong>Licensz:</strong> GPT Engineer</p>
+          <p><strong>Licensz:</strong> MIT</p>
           <p><strong>@2024</strong></p>
         </CardContent>
       </Card>
