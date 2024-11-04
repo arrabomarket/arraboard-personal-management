@@ -1,90 +1,64 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, User } from "lucide-react";
 import { toast } from "sonner";
-import Logo from "@/components/layout/Logo";
 
 export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin");
+  const [password, setPassword] = useState("password");
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password) {
-      toast.error("Kérjük töltse ki az összes mezőt!");
-      return;
-    }
-
     try {
-      // Demo célból csak ellenőrizzük a localStorage-ból
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find((u: any) => u.username === username && u.password === password);
-      
-      if (user || (username === 'admin' && password === 'password')) {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("currentUser", username);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email + "@example.com", // Since we're using username, we'll append a domain
+        password,
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
         toast.success("Sikeres bejelentkezés!");
         navigate("/");
-      } else {
-        toast.error("Hibás felhasználónév vagy jelszó!");
       }
     } catch (error) {
-      toast.error("Hiba történt a bejelentkezés során!");
+      console.error("Login error:", error);
+      toast.error("Sikertelen bejelentkezés!");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <Logo />
-          <CardTitle className="text-2xl font-bold mt-4">Bejelentkezés</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Felhasználónév"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  type="password"
-                  placeholder="Jelszó"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
-            </div>
-            <div className="text-right">
-              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                Elfelejtett jelszó?
-              </Link>
-            </div>
-            <Button type="submit" className="w-full">
-              Bejelentkezés
-            </Button>
-            <div className="text-center text-sm">
-              Még nincs fiókja? <Link to="/register" className="text-primary hover:underline">Regisztráció</Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-lg">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold">Bejelentkezés</h2>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <Input
+              type="text"
+              placeholder="Felhasználónév"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <Input
+              type="password"
+              placeholder="Jelszó"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <Button type="submit" className="w-full">
+            Bejelentkezés
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
