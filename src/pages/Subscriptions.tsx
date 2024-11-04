@@ -238,9 +238,9 @@ export default function Subscriptions() {
                     href={subscription.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-primary hover:underline"
                   >
-                    <ExternalLink className="h-4 w-4" />
+                    <ExternalLink className="h-4 w-4 text-primary" />
                   </a>
                 </TableCell>
                 <TableCell>
@@ -256,14 +256,14 @@ export default function Subscriptions() {
                       setIsEditDialogOpen(true);
                     }}
                   >
-                    <Pencil className="h-4 w-4" />
+                    <Pencil className="h-4 w-4 text-primary" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDelete(subscription.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4 text-primary" />
                   </Button>
                 </TableCell>
               </TableRow>

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { X, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { TouchSensor, useSensor, useSensors, MouseSensor } from "@dnd-kit/core";
 
 interface Task {
   id: string;
@@ -20,6 +21,22 @@ export default function KanbanBoard({ id, title, onDelete }: KanbanBoardProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
   const [editingTask, setEditingTask] = useState<string | null>(null);
+
+  // Configure sensors for both mouse and touch interactions
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 10, // 10px movement before activation
+    },
+  });
+  
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250, // 250ms delay before activation
+      tolerance: 5, // 5px tolerance
+    },
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   // Load tasks from localStorage
   useEffect(() => {
@@ -77,13 +94,12 @@ export default function KanbanBoard({ id, title, onDelete }: KanbanBoardProps) {
           variant="ghost"
           size="icon"
           onClick={() => {
-            // Töröljük a feladatokat is amikor a projektet töröljük
             localStorage.removeItem(`project-${id}-tasks`);
             onDelete(id);
           }}
           className="h-8 w-8 p-0"
         >
-          <X className="h-4 w-4" />
+          <X className="h-4 w-4 text-primary" />
         </Button>
       </CardHeader>
       <CardContent>
@@ -119,7 +135,7 @@ export default function KanbanBoard({ id, title, onDelete }: KanbanBoardProps) {
                         onClick={() => setEditingTask(task.id)}
                         className="h-8 w-8"
                       >
-                        <Pencil className="h-4 w-4" />
+                        <Pencil className="h-4 w-4 text-primary" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -127,7 +143,7 @@ export default function KanbanBoard({ id, title, onDelete }: KanbanBoardProps) {
                         onClick={() => handleDeleteTask(task.id)}
                         className="h-8 w-8"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4 text-primary" />
                       </Button>
                     </div>
                   </>
@@ -142,7 +158,7 @@ export default function KanbanBoard({ id, title, onDelete }: KanbanBoardProps) {
               onChange={(e) => setNewTask(e.target.value)}
             />
             <Button type="submit" size="icon">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 text-primary" />
             </Button>
           </form>
         </div>
