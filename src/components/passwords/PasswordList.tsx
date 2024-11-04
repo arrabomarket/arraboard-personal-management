@@ -28,13 +28,22 @@ interface PasswordListProps {
 }
 
 export default function PasswordList({
-  passwords,
-  searchTerm,
+  passwords = [], // Provide default empty array
+  searchTerm = "", // Provide default empty string
   onSearchChange,
   onEdit,
   onDelete,
 }: PasswordListProps) {
   const [selectedPassword, setSelectedPassword] = useState<Password | null>(null);
+
+  // Filter passwords safely
+  const filteredPasswords = passwords.filter((password) => {
+    const searchLower = searchTerm?.toLowerCase() || "";
+    const nameLower = password.name?.toLowerCase() || "";
+    const urlLower = password.url?.toLowerCase() || "";
+    
+    return nameLower.includes(searchLower) || urlLower.includes(searchLower);
+  });
 
   return (
     <div className="space-y-4">
@@ -62,11 +71,11 @@ export default function PasswordList({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {passwords.map((password) => (
+            {filteredPasswords.map((password) => (
               <TableRow key={password.id}>
                 <TableCell className="font-medium">{password.name}</TableCell>
                 <TableCell>
-                  <a href={password.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a href={password.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                     {password.url}
                   </a>
                 </TableCell>
@@ -78,7 +87,7 @@ export default function PasswordList({
                       size="icon"
                       onClick={() => setSelectedPassword(password)}
                     >
-                      <Eye className="h-4 w-4" />
+                      <Eye className="h-4 w-4 text-primary" />
                     </Button>
                   </div>
                 </TableCell>
@@ -89,20 +98,20 @@ export default function PasswordList({
                       size="icon"
                       onClick={() => onEdit(password)}
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-4 w-4 text-primary" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => onDelete(password.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4 text-primary" />
                     </Button>
                   </div>
                 </TableCell>
               </TableRow>
             ))}
-            {passwords.length === 0 && (
+            {filteredPasswords.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-8">
                   Nincs találat
