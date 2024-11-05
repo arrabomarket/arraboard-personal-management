@@ -50,11 +50,11 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className="flex h-full w-64 flex-col bg-white text-black">
+    <div className="flex h-full flex-col bg-white text-black group-hover:w-64 w-16 transition-all duration-300">
       <div className="p-6">
         <div className="flex items-center gap-2">
-          <Grid3x3 className="h-8 w-8 text-primary" />
-          <span className="font-bold text-xl tracking-tight">ArraBoard</span>
+          <Grid3x3 className="h-8 w-8 text-primary shrink-0" />
+          <span className="font-bold text-xl tracking-tight whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">ArraBoard</span>
         </div>
       </div>
       <nav className="flex-1 space-y-1 px-3 py-2">
@@ -63,12 +63,13 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
             <Button
               variant="ghost"
               className={cn(
-                "w-full justify-start gap-2 text-black hover:bg-[#222222] hover:text-white",
-                location.pathname === href && "bg-[#222222] text-white"
+                "w-full justify-start gap-2 text-black hover:bg-[#222222] hover:text-white group-hover:px-4",
+                location.pathname === href && "bg-[#222222] text-white",
+                "px-0 group-hover:px-4 transition-all duration-300"
               )}
             >
-              <Icon className="h-4 w-4 text-primary" />
-              {label}
+              <Icon className="h-4 w-4 text-primary shrink-0" />
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">{label}</span>
             </Button>
           </Link>
         ))}
@@ -78,21 +79,22 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-start gap-2 text-black hover:bg-gray-200",
-              location.pathname === "/impresszum" && "bg-gray-200"
+              "w-full justify-start gap-2 text-black hover:bg-gray-200 group-hover:px-4",
+              location.pathname === "/impresszum" && "bg-gray-200",
+              "px-0 group-hover:px-4 transition-all duration-300"
             )}
           >
-            <SettingsIcon className="h-4 w-4 text-primary" />
-            Impresszum
+            <SettingsIcon className="h-4 w-4 text-primary shrink-0" />
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Impresszum</span>
           </Button>
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2 text-black hover:bg-gray-200"
+          className="w-full justify-start gap-2 text-black hover:bg-gray-200 px-0 group-hover:px-4 transition-all duration-300"
           onClick={handleLogout}
         >
-          <LogOut className="h-4 w-4 text-primary" />
-          Kijelentkezés
+          <LogOut className="h-4 w-4 text-primary shrink-0" />
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">Kijelentkezés</span>
         </Button>
       </div>
     </div>
