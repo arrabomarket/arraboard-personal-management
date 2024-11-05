@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, ListCheck, Calendar as CalendarIcon, Wallet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Clock, ListCheck, Calendar as CalendarIcon, Wallet, ExternalLink } from "lucide-react";
 import { format, startOfWeek, addDays } from "date-fns";
 import { hu } from "date-fns/locale";
 
@@ -8,11 +9,6 @@ export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [todaysTasks, setTodaysTasks] = useState<any[]>([]);
   const [transactions, setTransactions] = useState<any[]>([]);
-
-  const [allTasks, setAllTasks] = useState<{ total: number; completed: number }>({
-    total: 0,
-    completed: 0
-  });
 
   // Update time every second
   useEffect(() => {
@@ -50,18 +46,6 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Load all tasks
-  useEffect(() => {
-    const savedCategories = localStorage.getItem("taskCategories");
-    if (savedCategories) {
-      const categories = JSON.parse(savedCategories);
-      const totalTasks = categories.reduce((acc: number, cat: any) => acc + cat.tasks.length, 0);
-      const completedTasks = categories.reduce((acc: number, cat: any) => 
-        acc + cat.tasks.filter((task: any) => task.completed).length, 0);
-      setAllTasks({ total: totalTasks, completed: completedTasks });
-    }
-  }, []);
-
   // Calculate monthly income and expenses
   const currentMonth = format(currentTime, "yyyy-MM");
   const monthlyTransactions = transactions.filter(t => 
@@ -88,80 +72,105 @@ export default function Dashboard() {
     };
   });
 
+  const quickLinks = [
+    { name: 'VPS', url: 'https://plesk.arrabomarket.hu:8443/', icon: ExternalLink },
+    { name: 'RACKHOST', url: 'https://www.rackhost.hu/site/serviceList', icon: ExternalLink },
+    { name: 'CHAT GPT', url: 'https://chatgpt.com/', icon: ExternalLink },
+  ];
+
   return (
     <div className="h-[calc(100vh-2rem)]">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">Irányítópult</h1>
       </div>
       
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {/* Time Widget */}
-        <Card className="h-[160px]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pontos idő</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {format(currentTime, "HH:mm:ss")}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4">
+        {/* First Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Time Widget */}
+          <Card className="md:col-span-1">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pontos idő</CardTitle>
+              <Clock className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {format(currentTime, "HH:mm:ss")}
+              </div>
+              <div className="text-xl mt-2">
+                {format(currentTime, "yyyy. MMMM d.", { locale: hu })}
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Date Widget */}
-        <Card className="h-[160px] bg-[#13A3B5] text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Dátum</CardTitle>
-            <CalendarIcon className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {format(currentTime, "yyyy. MMMM d.", { locale: hu })}
-            </div>
-          </CardContent>
-        </Card>
+          {/* Monthly Finance Widget */}
+          <Card className="md:col-span-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Havi pénzügyek</CardTitle>
+              <Wallet className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="flex justify-between">
+                <span>Bevétel:</span>
+                <span className="text-green-600">+{monthlyIncome.toLocaleString('hu-HU')} Ft</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Kiadás:</span>
+                <span className="text-red-600">-{monthlyExpenses.toLocaleString('hu-HU')} Ft</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Monthly Finance Widget */}
-        <Card className="h-[160px]">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Havi pénzügyek</CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between">
-              <span>Bevétel:</span>
-              <span className="text-green-600">+{monthlyIncome.toLocaleString('hu-HU')} Ft</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Kiadás:</span>
-              <span className="text-red-600">-{monthlyExpenses.toLocaleString('hu-HU')} Ft</span>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Second Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Today's Tasks */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Mai tennivalók</CardTitle>
+              <ListCheck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {todaysTasks.length === 0 ? (
+                  <p className="text-muted-foreground">Nincs mai tennivaló</p>
+                ) : (
+                  todaysTasks.map((task) => (
+                    <div key={task.id} className="flex items-center justify-between rounded-lg border p-2">
+                      <span>{task.title}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Today's Tasks Widget */}
-        <Card className="h-[160px] bg-black text-white">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Mai tennivalók</CardTitle>
-            <ListCheck className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {todaysTasks.length === 0 ? (
-                <p className="text-muted">Nincs mai tennivaló</p>
-              ) : (
-                todaysTasks.map((task) => (
-                  <div key={task.id} className="flex items-center justify-between rounded-lg border border-white/20 p-2">
-                    <span>{task.title}</span>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
+          {/* Quick Links */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Gyors elérés</CardTitle>
+              <ExternalLink className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4">
+                {quickLinks.map((link) => (
+                  <Button
+                    key={link.name}
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => window.open(link.url, '_blank')}
+                  >
+                    <link.icon className="h-4 w-4 mr-2" />
+                    {link.name}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Week Calendar Widget */}
-        <Card className="h-[160px] md:col-span-2">
+        {/* Third Row */}
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Heti naptár</CardTitle>
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
