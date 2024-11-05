@@ -88,10 +88,10 @@ export default function Dashboard() {
         {/* First Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Time Widget */}
-          <Card className="md:col-span-1">
+          <Card className="md:col-span-1 bg-[#13A3B5] text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pontos idő</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Clock className="h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -104,7 +104,7 @@ export default function Dashboard() {
           </Card>
 
           {/* Monthly Finance Widget */}
-          <Card className="md:col-span-2">
+          <Card className="md:col-span-2 bg-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Havi pénzügyek</CardTitle>
               <Wallet className="h-4 w-4 text-muted-foreground" />
@@ -125,18 +125,18 @@ export default function Dashboard() {
         {/* Second Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Today's Tasks */}
-          <Card>
+          <Card className="bg-black text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Mai tennivalók</CardTitle>
-              <ListCheck className="h-4 w-4 text-muted-foreground" />
+              <ListCheck className="h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {todaysTasks.length === 0 ? (
-                  <p className="text-muted-foreground">Nincs mai tennivaló</p>
+                  <p className="text-white/70">Nincs mai tennivaló</p>
                 ) : (
                   todaysTasks.map((task) => (
-                    <div key={task.id} className="flex items-center justify-between rounded-lg border p-2">
+                    <div key={task.id} className="flex items-center justify-between rounded-lg border border-white/20 p-2">
                       <span>{task.title}</span>
                     </div>
                   ))
@@ -146,10 +146,10 @@ export default function Dashboard() {
           </Card>
 
           {/* Quick Links */}
-          <Card>
+          <Card className="bg-[#13A3B5] text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Gyors elérés</CardTitle>
-              <ExternalLink className="h-4 w-4 text-muted-foreground" />
+              <ExternalLink className="h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-4">
@@ -157,7 +157,7 @@ export default function Dashboard() {
                   <Button
                     key={link.name}
                     variant="outline"
-                    className="w-full"
+                    className="w-full bg-white/10 hover:bg-white/20 text-white border-white/20"
                     onClick={() => window.open(link.url, '_blank')}
                   >
                     <link.icon className="h-4 w-4 mr-2" />
@@ -170,7 +170,7 @@ export default function Dashboard() {
         </div>
 
         {/* Third Row */}
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Heti naptár</CardTitle>
             <CalendarIcon className="h-4 w-4 text-muted-foreground" />
@@ -181,7 +181,7 @@ export default function Dashboard() {
                 <div
                   key={day.date.toString()}
                   className={`flex flex-col items-center p-2 rounded-lg ${
-                    day.isToday ? 'bg-black text-white' : ''
+                    day.isToday ? 'bg-[#13A3B5] text-white' : ''
                   }`}
                 >
                   <span className="text-xs font-medium">{day.dayName}</span>
