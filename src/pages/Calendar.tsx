@@ -66,18 +66,18 @@ export default function CalendarPage() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Naptár</h1>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div>
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-8">
           <Calendar
             mode="single"
             selected={date}
             onSelect={(newDate) => newDate && setDate(newDate)}
             locale={hu}
-            className="rounded-md border shadow-sm"
+            className="rounded-md border shadow-sm w-full p-6"
           />
         </div>
 
-        <Card>
+        <Card className="col-span-4">
           <CardHeader>
             <CardTitle>
               {format(date, "yyyy. MMMM d.", { locale: hu })}
