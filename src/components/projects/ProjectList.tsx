@@ -13,6 +13,8 @@ interface ProjectTask {
   id: string;
   title: string;
   status: "todo" | "doing" | "done";
+  user_id: string;
+  created_at: string;
 }
 
 interface ProjectListProps {

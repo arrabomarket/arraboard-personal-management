@@ -29,7 +29,7 @@ export default function ProjectForm({ onSubmit, initialData }: ProjectFormProps)
   useEffect(() => {
     if (initialData) {
       setTitle(initialData.title);
-      setStatus(initialData.status);
+      setStatus(initialData.status as "todo" | "doing" | "done");
     }
   }, [initialData]);
 

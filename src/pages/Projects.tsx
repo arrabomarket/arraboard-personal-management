@@ -59,7 +59,7 @@ export default function Projects() {
 
   // Update task
   const updateTask = useMutation({
-    mutationFn: async (task: ProjectTask) => {
+    mutationFn: async (task: { title: string; status: "todo" | "doing" | "done"; id: string }) => {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error("Not authenticated");
 
@@ -107,6 +107,14 @@ export default function Projects() {
     },
   });
 
+  const handleSubmit = (task: { title: string; status: "todo" | "doing" | "done" }) => {
+    if (editingTask) {
+      updateTask.mutate({ ...task, id: editingTask.id });
+    } else {
+      addTask.mutate(task);
+    }
+  };
+
   if (isLoading) {
     return <div>Betöltés...</div>;
   }
@@ -116,13 +124,7 @@ export default function Projects() {
       <h1 className="text-2xl font-bold">Projektek</h1>
       
       <ProjectForm
-        onSubmit={(task) => {
-          if (editingTask) {
-            updateTask.mutate({ ...task, id: editingTask.id, user_id: editingTask.user_id, created_at: editingTask.created_at });
-          } else {
-            addTask.mutate(task);
-          }
-        }}
+        onSubmit={handleSubmit}
         initialData={editingTask}
       />
       
