@@ -2,21 +2,21 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import DesireForm from "@/components/desires/DesireForm";
-import DesireList from "@/components/desires/DesireList";
+import GoalForm from "@/components/goals/GoalForm";
+import GoalList from "@/components/goals/GoalList";
 
-interface Desire {
+interface Goal {
   id: string;
   title: string;
   price: number;
   priority: string;
 }
 
-export default function Desires() {
+export default function Goals() {
   const queryClient = useQueryClient();
 
-  const { data: desires, isLoading } = useQuery({
-    queryKey: ["desires"],
+  const { data: goals, isLoading } = useQuery({
+    queryKey: ["goals"],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
@@ -31,7 +31,7 @@ export default function Desires() {
     },
   });
 
-  const handleSubmit = async (desireData: Omit<Desire, "id">) => {
+  const handleSubmit = async (goalData: Omit<Goal, "id">) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -40,19 +40,19 @@ export default function Desires() {
       }
 
       const { error } = await supabase.from("desires").insert({
-        title: desireData.title,
-        price: desireData.price,
-        priority: desireData.priority,
+        title: goalData.title,
+        price: goalData.price,
+        priority: goalData.priority,
         user_id: user.id,
       });
 
       if (error) throw error;
 
-      toast.success("Vágy sikeresen hozzáadva!");
-      queryClient.invalidateQueries({ queryKey: ["desires"] });
+      toast.success("Cél sikeresen hozzáadva!");
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
     } catch (error) {
-      console.error("Error adding desire:", error);
-      toast.error("Hiba történt a vágy hozzáadásakor");
+      console.error("Error adding goal:", error);
+      toast.error("Hiba történt a cél hozzáadásakor");
     }
   };
 
@@ -65,11 +65,11 @@ export default function Desires() {
 
       if (error) throw error;
 
-      toast.success("Vágy sikeresen törölve!");
-      queryClient.invalidateQueries({ queryKey: ["desires"] });
+      toast.success("Cél sikeresen törölve!");
+      queryClient.invalidateQueries({ queryKey: ["goals"] });
     } catch (error) {
-      console.error("Error deleting desire:", error);
-      toast.error("Hiba történt a vágy törlésekor");
+      console.error("Error deleting goal:", error);
+      toast.error("Hiba történt a cél törlésekor");
     }
   };
 
@@ -80,11 +80,11 @@ export default function Desires() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Vágyak</h1>
+        <h1 className="text-3xl font-bold">Célok</h1>
       </div>
 
-      <DesireForm onSubmit={handleSubmit} />
-      <DesireList desires={desires || []} onDelete={handleDelete} />
+      <GoalForm onSubmit={handleSubmit} />
+      <GoalList goals={goals || []} onDelete={handleDelete} />
     </div>
   );
 }

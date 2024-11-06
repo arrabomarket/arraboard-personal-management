@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, ListCheck, Calendar as CalendarIcon, Wallet, ExternalLink } from "lucide-react";
+import { Clock, ListCheck, Calendar as CalendarIcon, Wallet, ExternalLink, Target } from "lucide-react";
 import { format, startOfWeek, addDays } from "date-fns";
 import { hu } from "date-fns/locale";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -78,6 +80,25 @@ export default function Dashboard() {
     { name: 'CHAT GPT', url: 'https://chatgpt.com/', icon: ExternalLink },
   ];
 
+  // Load high priority goals for dashboard
+  const { data: highPriorityGoals } = useQuery({
+    queryKey: ["high-priority-goals"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
+      const { data, error } = await supabase
+        .from("desires")
+        .select("*")
+        .eq("priority", "magas")
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <div className="h-[calc(100vh-2rem)]">
       <div className="flex items-center justify-between mb-6">
@@ -145,25 +166,24 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Quick Links */}
+          {/* High Priority Goals */}
           <Card className="bg-[#13A3B5] text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Gyors elérés</CardTitle>
-              <ExternalLink className="h-4 w-4" />
+              <CardTitle className="text-sm font-medium">Fő Célok</CardTitle>
+              <Target className="h-4 w-4" />
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                {quickLinks.map((link) => (
-                  <Button
-                    key={link.name}
-                    variant="outline"
-                    className="w-full bg-white/10 hover:bg-white/20 text-white border-white/20"
-                    onClick={() => window.open(link.url, '_blank')}
-                  >
-                    <link.icon className="h-4 w-4 mr-2" />
-                    {link.name}
-                  </Button>
-                ))}
+              <div className="space-y-2">
+                {!highPriorityGoals || highPriorityGoals.length === 0 ? (
+                  <p className="text-white/70">Nincs magas prioritású cél</p>
+                ) : (
+                  highPriorityGoals.map((goal) => (
+                    <div key={goal.id} className="flex items-center justify-between rounded-lg border border-white/20 p-2">
+                      <span>{goal.title}</span>
+                      <span>{goal.price.toLocaleString('hu-HU')} Ft</span>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
