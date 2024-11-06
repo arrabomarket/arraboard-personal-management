@@ -9,6 +9,8 @@ interface ProjectTask {
   id: string;
   title: string;
   status: "todo" | "doing" | "done";
+  user_id: string;
+  created_at: string;
 }
 
 export default function Projects() {
@@ -19,20 +21,31 @@ export default function Projects() {
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ["project-tasks"],
     queryFn: async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("Not authenticated");
+
       const { data, error } = await supabase
         .from("project_tasks")
         .select("*")
+        .eq("user_id", user.user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as ProjectTask[];
     },
   });
 
   // Add task
   const addTask = useMutation({
-    mutationFn: async (newTask: { title: string; status: string }) => {
-      const { error } = await supabase.from("project_tasks").insert([newTask]);
+    mutationFn: async (newTask: { title: string; status: "todo" | "doing" | "done" }) => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("Not authenticated");
+
+      const { error } = await supabase.from("project_tasks").insert([{
+        ...newTask,
+        user_id: user.user.id,
+      }]);
+      
       if (error) throw error;
     },
     onSuccess: () => {
@@ -47,10 +60,18 @@ export default function Projects() {
   // Update task
   const updateTask = useMutation({
     mutationFn: async (task: ProjectTask) => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("Not authenticated");
+
       const { error } = await supabase
         .from("project_tasks")
-        .update({ title: task.title, status: task.status })
-        .eq("id", task.id);
+        .update({ 
+          title: task.title, 
+          status: task.status,
+        })
+        .eq("id", task.id)
+        .eq("user_id", user.user.id);
+
       if (error) throw error;
     },
     onSuccess: () => {
@@ -66,10 +87,15 @@ export default function Projects() {
   // Delete task
   const deleteTask = useMutation({
     mutationFn: async (id: string) => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error("Not authenticated");
+
       const { error } = await supabase
         .from("project_tasks")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_id", user.user.id);
+
       if (error) throw error;
     },
     onSuccess: () => {
@@ -92,11 +118,12 @@ export default function Projects() {
       <ProjectForm
         onSubmit={(task) => {
           if (editingTask) {
-            updateTask.mutate({ ...task, id: editingTask.id } as ProjectTask);
+            updateTask.mutate({ ...task, id: editingTask.id, user_id: editingTask.user_id, created_at: editingTask.created_at });
           } else {
             addTask.mutate(task);
           }
         }}
+        initialData={editingTask}
       />
       
       <ProjectList

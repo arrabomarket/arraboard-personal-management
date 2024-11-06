@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -7,45 +8,52 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
-import { toast } from "sonner";
 
-interface ProjectFormProps {
-  onSubmit: (task: { title: string; status: string }) => void;
+interface ProjectTask {
+  id: string;
+  title: string;
+  status: "todo" | "doing" | "done";
+  user_id: string;
+  created_at: string;
 }
 
-export default function ProjectForm({ onSubmit }: ProjectFormProps) {
+interface ProjectFormProps {
+  onSubmit: (task: { title: string; status: "todo" | "doing" | "done" }) => void;
+  initialData?: ProjectTask | null;
+}
+
+export default function ProjectForm({ onSubmit, initialData }: ProjectFormProps) {
   const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<"todo" | "doing" | "done">("todo");
+
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title);
+      setStatus(initialData.status);
+    }
+  }, [initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!title || !status) {
-      toast.error("Kérlek töltsd ki az összes mezőt!");
-      return;
+    onSubmit({ title, status });
+    if (!initialData) {
+      setTitle("");
+      setStatus("todo");
     }
-
-    onSubmit({
-      title: title.trim(),
-      status,
-    });
-
-    setTitle("");
-    setStatus("");
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex flex-col space-y-2">
         <Input
           placeholder="Feladat neve"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          required
         />
-        <Select value={status} onValueChange={setStatus}>
+        <Select value={status} onValueChange={(value: "todo" | "doing" | "done") => setStatus(value)}>
           <SelectTrigger>
-            <SelectValue placeholder="Állapot" />
+            <SelectValue placeholder="Válassz státuszt" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="todo">Teendő</SelectItem>
@@ -54,8 +62,8 @@ export default function ProjectForm({ onSubmit }: ProjectFormProps) {
           </SelectContent>
         </Select>
       </div>
-      <Button type="submit" className="w-full">
-        Hozzáadás
+      <Button type="submit">
+        {initialData ? "Módosítás" : "Hozzáadás"}
       </Button>
     </form>
   );
