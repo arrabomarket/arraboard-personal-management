@@ -14,8 +14,7 @@ import Calendar from "./pages/Calendar";
 import Passwords from "./pages/Passwords";
 import Settings from "./pages/Settings";
 import Subscriptions from "./pages/Subscriptions";
-import Goals from "./pages/Desires"; // Renamed import
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Goals from "./pages/Desires";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +41,7 @@ const App = () => (
                   <Route path="/passwords" element={<Passwords />} />
                   <Route path="/impresszum" element={<Settings />} />
                   <Route path="/subscriptions" element={<Subscriptions />} />
-                  <Route path="/goals" element={<Goals />} /> {/* Updated path */}
+                  <Route path="/desires" element={<Goals />} />
                 </Routes>
               </Layout>
             </AuthGuard>
