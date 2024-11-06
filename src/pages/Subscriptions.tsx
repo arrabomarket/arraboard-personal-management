@@ -1,33 +1,10 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon, ExternalLink, Pencil, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import SubscriptionForm from "@/components/subscriptions/SubscriptionForm";
+import SubscriptionList from "@/components/subscriptions/SubscriptionList";
 
 interface Subscription {
   id: string;
@@ -154,202 +131,43 @@ export default function Subscriptions() {
         <h1 className="text-3xl font-bold">Előfizetések</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Név</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Netflix"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="url">URL</Label>
-            <Input
-              id="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://netflix.com"
-              type="url"
-            />
-          </div>
+      <SubscriptionForm
+        name={name}
+        url={url}
+        expiryDate={expiryDate}
+        amount={amount}
+        onNameChange={setName}
+        onUrlChange={setUrl}
+        onExpiryDateChange={setExpiryDate}
+        onAmountChange={setAmount}
+        onSubmit={handleSubmit}
+      />
 
-          <div className="space-y-2">
-            <Label>Lejárat dátuma</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !expiryDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {expiryDate ? format(expiryDate, "yyyy.MM.dd") : "Válassz dátumot"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={expiryDate}
-                  onSelect={setExpiryDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="amount">Fizetendő összeg</Label>
-            <Input
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="4990"
-              type="number"
-            />
-          </div>
-        </div>
-
-        <Button type="submit" className="w-full">Hozzáadás</Button>
-      </form>
-
-      <div className="bg-white rounded-lg shadow-sm">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Név</TableHead>
-              <TableHead>Link</TableHead>
-              <TableHead>Lejárat dátuma</TableHead>
-              <TableHead>Fizetendő összeg</TableHead>
-              <TableHead className="text-right">Műveletek</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {subscriptions?.map((subscription) => (
-              <TableRow key={subscription.id}>
-                <TableCell>{subscription.name}</TableCell>
-                <TableCell>
-                  <a
-                    href={subscription.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    <ExternalLink className="h-4 w-4 text-primary" />
-                  </a>
-                </TableCell>
-                <TableCell>
-                  {format(new Date(subscription.expiry_date), "yyyy.MM.dd")}
-                </TableCell>
-                <TableCell>{subscription.amount.toLocaleString('hu-HU')} Ft</TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setEditingSubscription(subscription);
-                      setIsEditDialogOpen(true);
-                    }}
-                  >
-                    <Pencil className="h-4 w-4 text-primary" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(subscription.id)}
-                  >
-                    <Trash2 className="h-4 w-4 text-primary" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <SubscriptionList
+        subscriptions={subscriptions || []}
+        onEdit={(subscription) => {
+          setEditingSubscription(subscription);
+          setIsEditDialogOpen(true);
+        }}
+        onDelete={handleDelete}
+      />
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Előfizetés szerkesztése</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleEdit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">Név</Label>
-              <Input
-                id="edit-name"
-                value={editingSubscription?.name || ""}
-                onChange={(e) =>
-                  setEditingSubscription(prev =>
-                    prev ? { ...prev, name: e.target.value } : null
-                  )
-                }
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="edit-url">URL</Label>
-              <Input
-                id="edit-url"
-                value={editingSubscription?.url || ""}
-                onChange={(e) =>
-                  setEditingSubscription(prev =>
-                    prev ? { ...prev, url: e.target.value } : null
-                  )
-                }
-                type="url"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Lejárat dátuma</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal"
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {editingSubscription?.expiry_date
-                      ? format(new Date(editingSubscription.expiry_date), "yyyy.MM.dd")
-                      : "Válassz dátumot"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={editingSubscription?.expiry_date ? new Date(editingSubscription.expiry_date) : undefined}
-                    onSelect={(date) =>
-                      setEditingSubscription(prev =>
-                        prev ? { ...prev, expiry_date: date?.toISOString() || "" } : null
-                      )
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="edit-amount">Fizetendő összeg</Label>
-              <Input
-                id="edit-amount"
-                value={editingSubscription?.amount || ""}
-                onChange={(e) =>
-                  setEditingSubscription(prev =>
-                    prev ? { ...prev, amount: parseFloat(e.target.value) || 0 } : null
-                  )
-                }
-                type="number"
-              />
-            </div>
-
-            <Button type="submit" className="w-full">Mentés</Button>
-          </form>
+          <SubscriptionForm
+            name={editingSubscription?.name || ""}
+            url={editingSubscription?.url || ""}
+            expiryDate={editingSubscription?.expiry_date ? new Date(editingSubscription.expiry_date) : undefined}
+            amount={editingSubscription?.amount?.toString() || ""}
+            onNameChange={(value) => setEditingSubscription(prev => prev ? { ...prev, name: value } : null)}
+            onUrlChange={(value) => setEditingSubscription(prev => prev ? { ...prev, url: value } : null)}
+            onExpiryDateChange={(date) => setEditingSubscription(prev => prev ? { ...prev, expiry_date: date?.toISOString() || "" } : null)}
+            onAmountChange={(value) => setEditingSubscription(prev => prev ? { ...prev, amount: parseFloat(value) || 0 } : null)}
+            onSubmit={handleEdit}
+          />
         </DialogContent>
       </Dialog>
     </div>

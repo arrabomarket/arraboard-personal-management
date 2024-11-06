@@ -42,9 +42,6 @@ export default function ContactForm({ contact, onSubmit, onCancel }: ContactForm
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 w-full md:max-w-2xl bg-white p-4 md:p-6 rounded-lg shadow-sm">
-      <h2 className="text-xl font-semibold mb-4">
-        {contact ? "Kapcsolat szerkesztése" : "Új kapcsolat hozzáadása"}
-      </h2>
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm font-medium">
