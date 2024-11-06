@@ -67,7 +67,7 @@ export default function CalendarPage() {
       <h1 className="text-3xl font-bold">Naptár</h1>
 
       <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-8">
+        <div className="col-span-4">
           <Calendar
             mode="single"
             selected={date}
@@ -77,7 +77,7 @@ export default function CalendarPage() {
           />
         </div>
 
-        <Card className="col-span-4">
+        <Card className="col-span-8">
           <CardHeader>
             <CardTitle>
               {format(date, "yyyy. MMMM d.", { locale: hu })}
