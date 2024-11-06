@@ -2,15 +2,15 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Trash2 } from "lucide-react";
 
-interface Desire {
+interface Goal {
   id: string;
   title: string;
   price: number;
   priority: string;
 }
 
-interface DesireListProps {
-  desires: Desire[];
+interface GoalListProps {
+  goals: Goal[];
   onDelete: (id: string) => void;
 }
 
@@ -27,7 +27,7 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-export default function DesireList({ desires, onDelete }: DesireListProps) {
+export default function GoalList({ goals, onDelete }: GoalListProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <Table>
@@ -40,20 +40,20 @@ export default function DesireList({ desires, onDelete }: DesireListProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {desires.map((desire) => (
-            <TableRow key={desire.id}>
-              <TableCell>{desire.title}</TableCell>
-              <TableCell>{desire.price.toLocaleString('hu-HU')} Ft</TableCell>
+          {goals.map((goal) => (
+            <TableRow key={goal.id}>
+              <TableCell>{goal.title}</TableCell>
+              <TableCell>{goal.price.toLocaleString('hu-HU')} Ft</TableCell>
               <TableCell>
-                <span className={`px-2 py-1 rounded-full text-sm ${getPriorityColor(desire.priority)}`}>
-                  {desire.priority}
+                <span className={`px-2 py-1 rounded-full text-sm ${getPriorityColor(goal.priority)}`}>
+                  {goal.priority}
                 </span>
               </TableCell>
               <TableCell className="text-right">
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => onDelete(desire.id)}
+                  onClick={() => onDelete(goal.id)}
                 >
                   <Trash2 className="h-4 w-4 text-primary" />
                 </Button>
