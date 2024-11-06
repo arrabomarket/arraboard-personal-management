@@ -28,7 +28,7 @@ const NAVIGATION_LINKS = [
   { href: "/calendar", label: "Naptár", icon: Calendar },
   { href: "/passwords", label: "Jelszókezelő", icon: Lock },
   { href: "/subscriptions", label: "Előfizetések", icon: CreditCard },
-  { href: "/desires", label: "Vágyak", icon: Heart },
+  { href: "/desires", label: "Célok", icon: Heart },
 ];
 
 // Separate the navigation button into a component
