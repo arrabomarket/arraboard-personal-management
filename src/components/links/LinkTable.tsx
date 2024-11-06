@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2 } from "lucide-react";
+import { ExternalLink, Pencil, Trash2 } from "lucide-react";
 
 interface Link {
   id: string;
@@ -32,8 +32,13 @@ export default function LinkTable({ links, onEdit, onDelete }: LinkTableProps) {
             <TableRow key={link.id}>
               <TableCell className="font-medium">{link.name}</TableCell>
               <TableCell>
-                <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                  {link.url}
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline inline-flex items-center gap-1"
+                >
+                  <ExternalLink className="h-4 w-4" />
                 </a>
               </TableCell>
               <TableCell>{link.category}</TableCell>

@@ -41,7 +41,6 @@ export default function SubscriptionList({ subscriptions, onEdit, onDelete }: Su
                   rel="noopener noreferrer"
                   className="text-primary hover:underline inline-flex items-center gap-1"
                 >
-                  <span className="md:hidden">Megnyitás</span>
                   <ExternalLink className="h-4 w-4" />
                 </a>
               </TableCell>

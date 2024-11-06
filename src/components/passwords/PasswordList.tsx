@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Eye, Pencil, Search, Trash2 } from "lucide-react";
+import { Eye, ExternalLink, Pencil, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 interface Password {
@@ -28,15 +28,14 @@ interface PasswordListProps {
 }
 
 export default function PasswordList({
-  passwords = [], // Provide default empty array
-  searchTerm = "", // Provide default empty string
+  passwords = [],
+  searchTerm = "",
   onSearchChange,
   onEdit,
   onDelete,
 }: PasswordListProps) {
   const [selectedPassword, setSelectedPassword] = useState<Password | null>(null);
 
-  // Filter passwords safely
   const filteredPasswords = passwords.filter((password) => {
     const searchLower = searchTerm?.toLowerCase() || "";
     const nameLower = password.name?.toLowerCase() || "";
@@ -75,8 +74,13 @@ export default function PasswordList({
               <TableRow key={password.id}>
                 <TableCell className="font-medium">{password.name}</TableCell>
                 <TableCell>
-                  <a href={password.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                    {password.url}
+                  <a
+                    href={password.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline inline-flex items-center gap-1"
+                  >
+                    <ExternalLink className="h-4 w-4" />
                   </a>
                 </TableCell>
                 <TableCell>
