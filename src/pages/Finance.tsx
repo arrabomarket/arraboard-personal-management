@@ -110,8 +110,8 @@ export default function Finance() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Pénzügy</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <Input
             placeholder="Tétel"
             value={title}
@@ -129,26 +129,26 @@ export default function Finance() {
             onChange={(e) => setDate(new Date(e.target.value))}
           />
           <Select value={category} onValueChange={(value) => setCategory(value as TransactionCategory)}>
-            <SelectTrigger className="bg-white">
+            <SelectTrigger>
               <SelectValue placeholder="Kategória" />
             </SelectTrigger>
-            <SelectContent className="bg-white">
+            <SelectContent>
               <SelectItem value="personal">Személyes</SelectItem>
               <SelectItem value="work">Munka</SelectItem>
               <SelectItem value="extra">Extra</SelectItem>
             </SelectContent>
           </Select>
           <Select value={type} onValueChange={(value) => setType(value as TransactionType)}>
-            <SelectTrigger className="bg-white">
+            <SelectTrigger>
               <SelectValue placeholder="Jelleg" />
             </SelectTrigger>
-            <SelectContent className="bg-white">
+            <SelectContent>
               <SelectItem value="income">Bevétel</SelectItem>
               <SelectItem value="expense">Kiadás</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit">Hozzáadás</Button>
+        <Button type="submit" className="w-full">Hozzáadás</Button>
       </form>
 
       <div className="space-y-4">
@@ -159,10 +159,10 @@ export default function Finance() {
               value={format(selectedMonth, "yyyy-MM")}
               onValueChange={(value) => setSelectedMonth(parse(value, "yyyy-MM", new Date()))}
             >
-              <SelectTrigger className="bg-white w-[200px]">
+              <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Válasszon hónapot" />
               </SelectTrigger>
-              <SelectContent className="bg-white">
+              <SelectContent>
                 {availableMonths.map((month) => (
                   <SelectItem key={month.value} value={month.value}>
                     {month.label}
@@ -174,10 +174,10 @@ export default function Finance() {
               value={selectedCategory} 
               onValueChange={(value) => setSelectedCategory(value as TransactionCategory | "all")}
             >
-              <SelectTrigger className="bg-white">
+              <SelectTrigger>
                 <SelectValue placeholder="Kategória" />
               </SelectTrigger>
-              <SelectContent className="bg-white">
+              <SelectContent>
                 <SelectItem value="all">Összes</SelectItem>
                 <SelectItem value="personal">Személyes</SelectItem>
                 <SelectItem value="work">Munka</SelectItem>

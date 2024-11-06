@@ -37,8 +37,8 @@ export default function PasswordForm({ password, onSubmit, onCancel }: PasswordF
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full md:max-w-2xl bg-white p-4 md:p-6 rounded-lg shadow-sm">
-      <div className="grid gap-4 md:grid-cols-3">
+    <form onSubmit={handleSubmit} className="space-y-4 w-full bg-white p-6 rounded-lg shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm font-medium">
             Oldal neve *
@@ -84,11 +84,12 @@ export default function PasswordForm({ password, onSubmit, onCancel }: PasswordF
             type="button"
             variant="outline"
             onClick={onCancel}
+            className="w-full"
           >
             Mégse
           </Button>
         )}
-        <Button type="submit">
+        <Button type="submit" className="w-full">
           {password ? "Mentés" : "Hozzáadás"}
         </Button>
       </div>

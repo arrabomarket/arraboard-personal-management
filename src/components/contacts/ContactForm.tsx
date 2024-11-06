@@ -41,8 +41,8 @@ export default function ContactForm({ contact, onSubmit, onCancel }: ContactForm
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full md:max-w-2xl bg-white p-4 md:p-6 rounded-lg shadow-sm">
-      <div className="grid gap-4 md:grid-cols-2">
+    <form onSubmit={handleSubmit} className="space-y-4 w-full bg-white p-6 rounded-lg shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="space-y-2">
           <label htmlFor="name" className="text-sm font-medium">
             Név *
@@ -84,12 +84,11 @@ export default function ContactForm({ contact, onSubmit, onCancel }: ContactForm
           <label htmlFor="notes" className="text-sm font-medium">
             Egyéb adatok
           </label>
-          <Textarea
+          <Input
             id="notes"
             name="notes"
             defaultValue={contact?.notes}
             placeholder="További információk..."
-            className="min-h-[40px] resize-none"
           />
         </div>
       </div>
@@ -99,11 +98,12 @@ export default function ContactForm({ contact, onSubmit, onCancel }: ContactForm
             type="button"
             variant="outline"
             onClick={onCancel}
+            className="w-full"
           >
             Mégse
           </Button>
         )}
-        <Button type="submit">
+        <Button type="submit" className="w-full">
           {contact ? "Mentés" : "Hozzáadás"}
         </Button>
       </div>

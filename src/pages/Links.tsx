@@ -87,8 +87,8 @@ export default function Links() {
     <div className="space-y-8">
       <h1 className="text-3xl font-bold">Linkek</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl bg-white p-6 rounded-lg shadow-sm">
-        <div className="grid gap-4 md:grid-cols-3">
+      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <label htmlFor="name" className="text-sm font-medium text-gray-600">
               Link neve *
@@ -99,7 +99,6 @@ export default function Links() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Link neve"
               required
-              className="bg-white"
             />
           </div>
           <div className="space-y-2">
@@ -113,7 +112,6 @@ export default function Links() {
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com"
               required
-              className="bg-white"
             />
           </div>
           <div className="space-y-2">
@@ -126,7 +124,6 @@ export default function Links() {
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Kategória"
               required
-              className="bg-white"
             />
           </div>
         </div>
@@ -141,12 +138,12 @@ export default function Links() {
                 setUrl("");
                 setCategory("");
               }}
-              className="hover:bg-gray-100"
+              className="w-full"
             >
               Mégse
             </Button>
           )}
-          <Button type="submit" className="bg-primary hover:bg-primary/90">
+          <Button type="submit" className="w-full">
             {editingLink ? "Mentés" : "Hozzáadás"}
           </Button>
         </div>
@@ -161,7 +158,7 @@ export default function Links() {
               placeholder="Keresés..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 bg-white"
+              className="pl-8"
             />
           </div>
         </div>
