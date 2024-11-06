@@ -15,6 +15,7 @@ import {
   Settings as SettingsIcon,
   Grid3x3,
   CreditCard,
+  Heart,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -41,6 +42,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     { href: "/calendar", label: "Naptár", icon: Calendar },
     { href: "/passwords", label: "Jelszókezelő", icon: Lock },
     { href: "/subscriptions", label: "Előfizetések", icon: CreditCard },
+    { href: "/desires", label: "Vágyak", icon: Heart },
   ];
 
   const handleClick = () => {
