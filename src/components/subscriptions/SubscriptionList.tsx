@@ -21,7 +21,7 @@ export default function SubscriptionList({ subscriptions, onEdit, onDelete }: Su
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <Table>
-        <TableHeader>
+        <TableHeader className="hidden md:table-header-group">
           <TableRow>
             <TableHead>Név</TableHead>
             <TableHead>Link</TableHead>
@@ -32,23 +32,26 @@ export default function SubscriptionList({ subscriptions, onEdit, onDelete }: Su
         </TableHeader>
         <TableBody>
           {subscriptions?.map((subscription) => (
-            <TableRow key={subscription.id}>
-              <TableCell>{subscription.name}</TableCell>
-              <TableCell>
+            <TableRow key={subscription.id} className="group">
+              <TableCell label="Név">{subscription.name}</TableCell>
+              <TableCell label="Link">
                 <a
                   href={subscription.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline"
+                  className="text-primary hover:underline inline-flex items-center gap-1"
                 >
-                  <ExternalLink className="h-4 w-4 text-primary" />
+                  <span className="md:hidden">Megnyitás</span>
+                  <ExternalLink className="h-4 w-4" />
                 </a>
               </TableCell>
-              <TableCell>
+              <TableCell label="Lejárat dátuma">
                 {format(new Date(subscription.expiry_date), "yyyy.MM.dd")}
               </TableCell>
-              <TableCell>{subscription.amount.toLocaleString('hu-HU')} Ft</TableCell>
-              <TableCell className="text-right space-x-2">
+              <TableCell label="Fizetendő összeg">
+                {subscription.amount.toLocaleString('hu-HU')} Ft
+              </TableCell>
+              <TableCell className="md:text-right space-x-2">
                 <Button
                   variant="ghost"
                   size="icon"
