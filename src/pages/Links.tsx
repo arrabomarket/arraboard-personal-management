@@ -20,7 +20,6 @@ export default function Links() {
   const [category, setCategory] = useState("");
   const [editingLink, setEditingLink] = useState<Link | null>(null);
 
-  // Load links from localStorage on component mount
   useEffect(() => {
     const savedLinks = localStorage.getItem("links");
     if (savedLinks) {
@@ -28,7 +27,6 @@ export default function Links() {
     }
   }, []);
 
-  // Save links to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("links", JSON.stringify(links));
   }, [links]);
@@ -42,7 +40,6 @@ export default function Links() {
     }
 
     if (editingLink) {
-      // Update existing link
       const updatedLinks = links.map((link) =>
         link.id === editingLink.id
           ? { ...link, name: name.trim(), url: url.trim(), category: category.trim() }
@@ -51,7 +48,6 @@ export default function Links() {
       setLinks(updatedLinks);
       toast.success("Link sikeresen módosítva!");
     } else {
-      // Add new link
       const newLink: Link = {
         id: crypto.randomUUID(),
         name: name.trim(),
@@ -62,7 +58,6 @@ export default function Links() {
       toast.success("Link sikeresen hozzáadva!");
     }
 
-    // Reset form
     setName("");
     setUrl("");
     setCategory("");
@@ -93,12 +88,9 @@ export default function Links() {
       <h1 className="text-3xl font-bold">Linkek</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl bg-white p-6 rounded-lg shadow-sm">
-        <h2 className="text-xl font-semibold mb-4">
-          {editingLink ? "Link szerkesztése" : "Új link hozzáadása"}
-        </h2>
         <div className="grid gap-4 md:grid-cols-3">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">
+            <label htmlFor="name" className="text-sm font-medium text-gray-600">
               Link neve *
             </label>
             <Input
@@ -107,10 +99,11 @@ export default function Links() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Link neve"
               required
+              className="bg-white"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="url" className="text-sm font-medium">
+            <label htmlFor="url" className="text-sm font-medium text-gray-600">
               Hivatkozás *
             </label>
             <Input
@@ -120,10 +113,11 @@ export default function Links() {
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://example.com"
               required
+              className="bg-white"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="category" className="text-sm font-medium">
+            <label htmlFor="category" className="text-sm font-medium text-gray-600">
               Kategória *
             </label>
             <Input
@@ -132,6 +126,7 @@ export default function Links() {
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Kategória"
               required
+              className="bg-white"
             />
           </div>
         </div>
@@ -146,11 +141,12 @@ export default function Links() {
                 setUrl("");
                 setCategory("");
               }}
+              className="hover:bg-gray-100"
             >
               Mégse
             </Button>
           )}
-          <Button type="submit">
+          <Button type="submit" className="bg-primary hover:bg-primary/90">
             {editingLink ? "Mentés" : "Hozzáadás"}
           </Button>
         </div>
@@ -160,12 +156,12 @@ export default function Links() {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold">Linkek listája</h2>
           <div className="relative w-64">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Keresés..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
+              className="pl-8 bg-white"
             />
           </div>
         </div>

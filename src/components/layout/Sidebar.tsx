@@ -50,11 +50,11 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   };
 
   return (
-    <div className="flex h-full w-64 flex-col bg-white text-black">
+    <div className="flex h-full w-64 flex-col bg-white">
       <div className="p-6">
         <div className="flex items-center gap-2">
-          <Grid3x3 className="h-8 w-8 text-primary" />
-          <span className="font-bold text-xl tracking-tight">ArraBoard</span>
+          <Grid3x3 className="h-6 w-6 text-primary" />
+          <span className="font-semibold text-xl tracking-tight">ArraBoard</span>
         </div>
       </div>
       <nav className="flex-1 space-y-1 px-3 py-2">
@@ -63,35 +63,35 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
             <Button
               variant="ghost"
               className={cn(
-                "w-full justify-start gap-2 text-black hover:bg-[#222222] hover:text-white",
-                location.pathname === href && "bg-[#222222] text-white"
+                "w-full justify-start gap-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900",
+                location.pathname === href && "bg-gray-100 text-gray-900 font-medium"
               )}
             >
-              <Icon className="h-4 w-4 text-primary" />
+              <Icon className="h-4 w-4" />
               {label}
             </Button>
           </Link>
         ))}
       </nav>
-      <div className="border-t border-black/10 p-4 space-y-2">
+      <div className="border-t border-gray-200 p-4 space-y-2">
         <Link to="/impresszum" onClick={handleClick}>
           <Button
             variant="ghost"
             className={cn(
-              "w-full justify-start gap-2 text-black hover:bg-gray-200",
-              location.pathname === "/impresszum" && "bg-gray-200"
+              "w-full justify-start gap-2 text-gray-600 hover:bg-gray-100",
+              location.pathname === "/impresszum" && "bg-gray-100"
             )}
           >
-            <SettingsIcon className="h-4 w-4 text-primary" />
+            <SettingsIcon className="h-4 w-4" />
             Impresszum
           </Button>
         </Link>
         <Button
           variant="ghost"
-          className="w-full justify-start gap-2 text-black hover:bg-gray-200"
+          className="w-full justify-start gap-2 text-gray-600 hover:bg-gray-100"
           onClick={handleLogout}
         >
-          <LogOut className="h-4 w-4 text-primary" />
+          <LogOut className="h-4 w-4" />
           Kijelentkezés
         </Button>
       </div>

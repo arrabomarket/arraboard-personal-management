@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 98%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
@@ -50,10 +50,30 @@
   }
 }
 
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
 .sidebar-link {
-  @apply flex items-center gap-3 px-4 py-2 text-muted-foreground hover:bg-black hover:text-white transition-colors rounded-md;
+  @apply flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors rounded-md;
 }
 
 .sidebar-link.active {
-  @apply bg-black text-white;
+  @apply bg-gray-100 text-gray-900 font-medium;
+}
+
+input, select, textarea {
+  @apply focus:ring-primary/20 focus:border-primary/20;
+}
+
+button {
+  @apply transition-colors duration-200;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-100;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply tracking-tight;
 }

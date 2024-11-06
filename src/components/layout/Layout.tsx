@@ -9,9 +9,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen bg-gray-50">
       {/* Desktop Sidebar */}
-      <div className="hidden md:block border-r border-black/10">
+      <div className="hidden md:block border-r border-gray-200">
         <Sidebar />
       </div>
 
@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="md:hidden fixed top-4 right-4 z-50">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" className="bg-white">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
@@ -30,7 +30,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       <main className="flex-1 overflow-auto">
-        <div className="container py-6">
+        <div className="container py-8">
           <div className="md:ml-0">
             {children}
           </div>
