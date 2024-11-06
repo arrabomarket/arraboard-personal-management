@@ -1,193 +1,113 @@
-import { useState, useEffect } from "react";
-import { DndContext, DragEndEvent, closestCorners } from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import KanbanColumn from "@/components/projects/KanbanColumn";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import ProjectList from "@/components/projects/ProjectList";
+import ProjectForm from "@/components/projects/ProjectForm";
+import { toast } from "sonner";
 
-interface Task {
+interface ProjectTask {
   id: string;
-  content: string;
-  status: "todo" | "inProgress" | "done";
+  title: string;
+  status: "todo" | "doing" | "done";
 }
 
 export default function Projects() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [newTask, setNewTask] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const [editingTask, setEditingTask] = useState<ProjectTask | null>(null);
 
-  const columns = [
-    { id: "todo", title: "Tennivalók" },
-    { id: "inProgress", title: "Folyamatban" },
-    { id: "done", title: "Kész" },
-  ];
-
-  // Load tasks from Supabase on component mount
-  useEffect(() => {
-    const loadTasks = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data, error } = await supabase
-          .from('project_tasks')
-          .select('*')
-          .eq('user_id', user.id);
-
-        if (error) throw error;
-
-        const formattedTasks: Task[] = data.map(task => ({
-          id: task.id,
-          content: task.title,
-          status: task.status as Task["status"],
-        }));
-
-        setTasks(formattedTasks);
-      } catch (error) {
-        console.error('Error loading tasks:', error);
-        toast.error('Hiba történt a feladatok betöltésekor');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadTasks();
-  }, []);
-
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    const activeTask = tasks.find((task) => task.id === active.id);
-    const overColumn = over.id;
-
-    if (activeTask && typeof overColumn === "string") {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const updatedTasks = tasks.map((task) =>
-          task.id === activeTask.id
-            ? { ...task, status: overColumn as Task["status"] }
-            : task
-        );
-
-        const { error } = await supabase
-          .from('project_tasks')
-          .update({ status: overColumn })
-          .eq('id', activeTask.id)
-          .eq('user_id', user.id);
-
-        if (error) throw error;
-
-        setTasks(updatedTasks);
-      } catch (error) {
-        console.error('Error updating task status:', error);
-        toast.error('Hiba történt a feladat áthelyezésekor');
-      }
-    }
-  };
-
-  const handleAddTask = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTask.trim()) {
-      toast.error("A feladat neve nem lehet üres!");
-      return;
-    }
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
+  // Fetch tasks
+  const { data: tasks = [], isLoading } = useQuery({
+    queryKey: ["project-tasks"],
+    queryFn: async () => {
       const { data, error } = await supabase
-        .from('project_tasks')
-        .insert({
-          title: newTask.trim(),
-          status: 'todo',
-          user_id: user.id,
-        })
-        .select()
-        .single();
+        .from("project_tasks")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
+      return data;
+    },
+  });
 
-      const newTaskObj: Task = {
-        id: data.id,
-        content: data.title,
-        status: data.status as Task["status"],
-      };
-
-      setTasks([...tasks, newTaskObj]);
-      setNewTask("");
+  // Add task
+  const addTask = useMutation({
+    mutationFn: async (newTask: { title: string; status: string }) => {
+      const { error } = await supabase.from("project_tasks").insert([newTask]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project-tasks"] });
       toast.success("Feladat sikeresen hozzáadva!");
-    } catch (error) {
-      console.error('Error adding task:', error);
-      toast.error('Hiba történt a feladat hozzáadásakor');
-    }
-  };
+    },
+    onError: () => {
+      toast.error("Hiba történt a feladat hozzáadása közben!");
+    },
+  });
 
-  const clearDoneTasks = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
+  // Update task
+  const updateTask = useMutation({
+    mutationFn: async (task: ProjectTask) => {
       const { error } = await supabase
-        .from('project_tasks')
-        .delete()
-        .eq('status', 'done')
-        .eq('user_id', user.id);
-
+        .from("project_tasks")
+        .update({ title: task.title, status: task.status })
+        .eq("id", task.id);
       if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project-tasks"] });
+      setEditingTask(null);
+      toast.success("Feladat sikeresen módosítva!");
+    },
+    onError: () => {
+      toast.error("Hiba történt a feladat módosítása közben!");
+    },
+  });
 
-      setTasks(tasks.filter((task) => task.status !== "done"));
-      toast.success("Befejezett feladatok törölve!");
-    } catch (error) {
-      console.error('Error clearing done tasks:', error);
-      toast.error('Hiba történt a befejezett feladatok törlésekor');
-    }
-  };
+  // Delete task
+  const deleteTask = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("project_tasks")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project-tasks"] });
+      toast.success("Feladat sikeresen törölve!");
+    },
+    onError: () => {
+      toast.error("Hiba történt a feladat törlése közben!");
+    },
+  });
 
   if (isLoading) {
     return <div>Betöltés...</div>;
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Projektek</h1>
-      </div>
-
-      <form onSubmit={handleAddTask} className="flex gap-4">
-        <Input
-          placeholder="Új feladat..."
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          className="max-w-sm"
-        />
-        <Button type="submit">
-          <Plus className="w-4 h-4 mr-2" />
-          Hozzáad
-        </Button>
-      </form>
-
-      <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {columns.map((column) => (
-            <KanbanColumn
-              key={column.id}
-              id={column.id}
-              title={column.title}
-              tasks={tasks.filter((task) => task.status === column.id)}
-              showClearButton={column.id === "done"}
-              onClear={clearDoneTasks}
-            />
-          ))}
-        </div>
-      </DndContext>
+    <div className="container mx-auto py-6 space-y-6">
+      <h1 className="text-2xl font-bold">Projektek</h1>
+      
+      <ProjectForm
+        onSubmit={(task) => {
+          if (editingTask) {
+            updateTask.mutate({ ...task, id: editingTask.id } as ProjectTask);
+          } else {
+            addTask.mutate(task);
+          }
+        }}
+      />
+      
+      <ProjectList
+        tasks={tasks}
+        onEdit={setEditingTask}
+        onDelete={(id) => {
+          if (window.confirm("Biztosan törölni szeretnéd ezt a feladatot?")) {
+            deleteTask.mutate(id);
+          }
+        }}
+      />
     </div>
   );
 }
