@@ -15,7 +15,7 @@ interface NoteListProps {
 
 export function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5 bg-white border border-[#DFDFDF] rounded-lg p-4">
       {notes.map((note, index) => (
         <div
           key={note.id}
