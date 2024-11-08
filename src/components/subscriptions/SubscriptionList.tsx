@@ -33,8 +33,11 @@ export default function SubscriptionList({ subscriptions, onEdit, onDelete }: Su
         <TableBody>
           {subscriptions?.map((subscription) => (
             <TableRow key={subscription.id} className="group">
-              <TableCell label="Név">{subscription.name}</TableCell>
-              <TableCell label="Link">
+              <TableCell className="md:hidden font-medium">Név:</TableCell>
+              <TableCell>{subscription.name}</TableCell>
+              
+              <TableCell className="md:hidden font-medium">Link:</TableCell>
+              <TableCell>
                 <a
                   href={subscription.url}
                   target="_blank"
@@ -44,12 +47,17 @@ export default function SubscriptionList({ subscriptions, onEdit, onDelete }: Su
                   <ExternalLink className="h-4 w-4" />
                 </a>
               </TableCell>
-              <TableCell label="Lejárat dátuma">
+              
+              <TableCell className="md:hidden font-medium">Lejárat dátuma:</TableCell>
+              <TableCell>
                 {format(new Date(subscription.expiry_date), "yyyy.MM.dd")}
               </TableCell>
-              <TableCell label="Fizetendő összeg">
+              
+              <TableCell className="md:hidden font-medium">Fizetendő összeg:</TableCell>
+              <TableCell>
                 {subscription.amount.toLocaleString('hu-HU')} Ft
               </TableCell>
+              
               <TableCell className="md:text-right space-x-2">
                 <Button
                   variant="ghost"
