@@ -39,7 +39,7 @@ export function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
               onClick={() => onDelete(note.id)}
               className={index % 2 === 0 ? "hover:bg-[#13A3B5]/90 text-white" : ""}
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4 text-[#222222]" />
             </Button>
           </div>
         </div>

@@ -6,10 +6,7 @@ export default function Settings() {
       <h1 className="text-3xl font-bold">Impresszum</h1>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Impresszum</CardTitle>
-        </CardHeader>
-        <CardContent className="prose dark:prose-invert max-w-none space-y-4">
+        <CardContent className="prose dark:prose-invert max-w-none space-y-4 pt-6">
           <p><strong>Készítete:</strong> Farkas Attila - ArraboMarket</p>
           <p>
             <strong>Web:</strong>{" "}
