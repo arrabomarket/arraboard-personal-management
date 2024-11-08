@@ -140,25 +140,27 @@ export default function Notes() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Jegyzetek</h1>
-        <Button onClick={() => handleOpenDialog()}>
+    <div className="space-y-6 max-w-5xl mx-auto px-4">
+      <div className="flex items-center justify-between py-4 border-b border-gray-800/10">
+        <h1 className="text-2xl font-bold tracking-tight">Jegyzetek</h1>
+        <Button onClick={() => handleOpenDialog()} variant="default" className="bg-[#3ECF8E] hover:bg-[#3ECF8E]/90">
           <Plus className="w-4 h-4 mr-2" />
           Új jegyzet
         </Button>
       </div>
 
-      <NoteList
-        notes={notes}
-        onEdit={handleOpenDialog}
-        onDelete={handleDelete}
-      />
+      <div className="bg-gradient-to-b from-gray-900/5 to-transparent p-6 rounded-lg border border-gray-800/10">
+        <NoteList
+          notes={notes}
+          onEdit={handleOpenDialog}
+          onDelete={handleDelete}
+        />
+      </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[90%]">
+        <DialogContent className="sm:max-w-[90%] bg-[#1C1C1C] text-white border-gray-800">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-white">
               {editingNote ? "Jegyzet szerkesztése" : "Új jegyzet"}
             </DialogTitle>
           </DialogHeader>
