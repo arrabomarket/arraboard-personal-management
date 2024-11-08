@@ -27,6 +27,7 @@ const NAVIGATION_LINKS = [
   { href: "/calendar", label: "Naptár", icon: Calendar },
   { href: "/passwords", label: "Jelszókezelő", icon: Lock },
   { href: "/subscriptions", label: "Előfizetések", icon: ShoppingBag },
+  { href: "/desires", label: "Vásárlás", icon: ShoppingBag },
   { href: "/files", label: "Fájlok", icon: Files },
 ];
 
