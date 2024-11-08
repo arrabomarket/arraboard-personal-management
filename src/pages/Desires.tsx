@@ -51,7 +51,7 @@ export default function Goals() {
           .eq("id", editingGoal.id);
 
         if (error) throw error;
-        toast.success("Cél sikeresen módosítva!");
+        toast.success("Termék sikeresen módosítva!");
         setEditingGoal(null);
       } else {
         const { error } = await supabase.from("desires").insert({
@@ -62,7 +62,7 @@ export default function Goals() {
         });
 
         if (error) throw error;
-        toast.success("Cél sikeresen hozzáadva!");
+        toast.success("Termék sikeresen hozzáadva!");
       }
 
       queryClient.invalidateQueries({ queryKey: ["goals"] });
@@ -81,11 +81,11 @@ export default function Goals() {
 
       if (error) throw error;
 
-      toast.success("Cél sikeresen törölve!");
+      toast.success("Termék sikeresen törölve!");
       queryClient.invalidateQueries({ queryKey: ["goals"] });
     } catch (error) {
       console.error("Error deleting goal:", error);
-      toast.error("Hiba történt a cél törlésekor");
+      toast.error("Hiba történt a termék törlésekor");
     }
   };
 
@@ -96,7 +96,7 @@ export default function Goals() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Célok</h1>
+        <h1 className="text-3xl font-bold">Vásárlás</h1>
       </div>
 
       <GoalForm 

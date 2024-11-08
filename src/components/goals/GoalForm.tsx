@@ -52,27 +52,44 @@ export default function GoalForm({ goal, onSubmit, onCancel }: GoalFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Input
-          placeholder="Termék neve"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <Input
-          type="number"
-          placeholder="Termék ára"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
-        <Select value={priority} onValueChange={setPriority}>
-          <SelectTrigger>
-            <SelectValue placeholder="Prioritás" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="magas">Magas</SelectItem>
-            <SelectItem value="közepes">Közepes</SelectItem>
-            <SelectItem value="alacsony">Alacsony</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="space-y-2">
+          <label htmlFor="title" className="text-sm font-medium text-gray-700">
+            Termék neve *
+          </label>
+          <Input
+            id="title"
+            placeholder="Termék neve"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="price" className="text-sm font-medium text-gray-700">
+            Termék ára (Ft) *
+          </label>
+          <Input
+            id="price"
+            type="number"
+            placeholder="Termék ára"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="priority" className="text-sm font-medium text-gray-700">
+            Prioritás *
+          </label>
+          <Select value={priority} onValueChange={setPriority}>
+            <SelectTrigger id="priority">
+              <SelectValue placeholder="Válassz prioritást" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="magas">Magas</SelectItem>
+              <SelectItem value="közepes">Közepes</SelectItem>
+              <SelectItem value="alacsony">Alacsony</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <div className="flex gap-2">
         {goal && (
