@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-[#F2F2F2]">
       {/* Desktop Sidebar */}
       <div className="hidden md:block border-r border-gray-200">
         <Sidebar />
