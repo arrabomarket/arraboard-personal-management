@@ -15,7 +15,7 @@ import Calendar from "./pages/Calendar";
 import Passwords from "./pages/Passwords";
 import Settings from "./pages/Settings";
 import Subscriptions from "./pages/Subscriptions";
-import Goals from "./pages/Desires";
+import Shopping from "./pages/Desires";
 import Files from "./pages/Files";
 
 const queryClient = new QueryClient();
@@ -43,7 +43,7 @@ const App = () => (
                   <Route path="/passwords" element={<Passwords />} />
                   <Route path="/impresszum" element={<Settings />} />
                   <Route path="/subscriptions" element={<Subscriptions />} />
-                  <Route path="/desires" element={<Goals />} />
+                  <Route path="/desires" element={<Shopping />} />
                   <Route path="/files" element={<Files />} />
                 </Routes>
               </Layout>

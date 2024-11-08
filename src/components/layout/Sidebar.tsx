@@ -14,11 +14,10 @@ import {
   Settings as SettingsIcon,
   Grid3x3,
   CreditCard,
-  Heart,
+  ShoppingBag,
   Files,
 } from "lucide-react";
 
-// Separate the navigation links into a constant
 const NAVIGATION_LINKS = [
   { href: "/", label: "Irányítópult", icon: Home },
   { href: "/tasks", label: "Tennivalók", icon: Target },
@@ -29,11 +28,10 @@ const NAVIGATION_LINKS = [
   { href: "/calendar", label: "Naptár", icon: Calendar },
   { href: "/passwords", label: "Jelszókezelő", icon: Lock },
   { href: "/subscriptions", label: "Előfizetések", icon: CreditCard },
-  { href: "/desires", label: "Célok", icon: Heart },
+  { href: "/desires", label: "Vásárlás", icon: ShoppingBag },
   { href: "/files", label: "Fájlok", icon: Files },
 ];
 
-// Separate the navigation button into a component
 const NavButton = ({ href, label, icon: Icon, isActive, onClick }: {
   href: string;
   label: string;
