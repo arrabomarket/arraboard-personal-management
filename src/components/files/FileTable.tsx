@@ -77,19 +77,19 @@ export function FileTable({ files }: FileTableProps) {
               </TableCell>
               <TableCell className="text-right space-x-2">
                 <Button variant="ghost" size="icon" onClick={() => handleView(file)}>
-                  <Eye className="h-4 w-4" />
+                  <Eye className="h-4 w-4 text-primary" />
                 </Button>
                 <Button variant="ghost" size="icon">
-                  <Copy className="h-4 w-4" />
+                  <Copy className="h-4 w-4 text-primary" />
                 </Button>
                 <Button variant="ghost" size="icon">
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 text-primary" />
                 </Button>
                 <Button variant="ghost" size="icon">
-                  <Edit2 className="h-4 w-4" />
+                  <Edit2 className="h-4 w-4 text-primary" />
                 </Button>
                 <Button variant="ghost" size="icon" onClick={() => handleDelete(file)}>
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4 text-primary" />
                 </Button>
               </TableCell>
             </TableRow>
