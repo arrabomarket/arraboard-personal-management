@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
+    --background: 0 0% 97.6%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
@@ -97,7 +97,7 @@ tr:hover td {
 
 /* Modern Form Styles */
 input, select, textarea {
-  @apply block w-full rounded-lg border-[#DFDFDF] bg-white px-4 py-2.5 text-gray-700 focus:border-primary focus:ring-primary/10 sm:text-sm;
+  @apply block w-full rounded-lg border-[#DFDFDF] bg-white px-4 py-2.5 text-gray-700 focus:border-[#DFDFDF] focus:ring-[#DFDFDF]/10 sm:text-sm;
 }
 
 .btn-primary {

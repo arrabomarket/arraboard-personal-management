@@ -63,7 +63,7 @@ export default function GoalList({ goals, onEdit, onDelete }: GoalListProps) {
                   size="icon"
                   onClick={() => onDelete(goal.id)}
                 >
-                  <Trash2 className="h-4 w-4 text-primary" />
+                  <Trash2 className="h-4 w-4 text-[#222222]" />
                 </Button>
               </TableCell>
             </TableRow>

@@ -109,7 +109,7 @@ export default function PasswordList({
                       size="icon"
                       onClick={() => onDelete(password.id)}
                     >
-                      <Trash2 className="h-4 w-4 text-primary" />
+                      <Trash2 className="h-4 w-4 text-[#222222]" />
                     </Button>
                   </div>
                 </TableCell>

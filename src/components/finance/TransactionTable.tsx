@@ -64,7 +64,7 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Tra
                 size="icon"
                 onClick={() => onDelete(transaction.id)}
               >
-                <Trash2 className="h-4 w-4 text-primary" />
+                <Trash2 className="h-4 w-4 text-[#222222]" />
               </Button>
             </TableCell>
           </TableRow>
