@@ -13,6 +13,7 @@ interface Goal {
 }
 
 export default function Goals() {
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const queryClient = useQueryClient();
 
   const { data: goals, isLoading } = useQuery({
@@ -39,20 +40,35 @@ export default function Goals() {
         return;
       }
 
-      const { error } = await supabase.from("desires").insert({
-        title: goalData.title,
-        price: goalData.price,
-        priority: goalData.priority,
-        user_id: user.id,
-      });
+      if (editingGoal) {
+        const { error } = await supabase
+          .from("desires")
+          .update({
+            title: goalData.title,
+            price: goalData.price,
+            priority: goalData.priority,
+          })
+          .eq("id", editingGoal.id);
 
-      if (error) throw error;
+        if (error) throw error;
+        toast.success("Cél sikeresen módosítva!");
+        setEditingGoal(null);
+      } else {
+        const { error } = await supabase.from("desires").insert({
+          title: goalData.title,
+          price: goalData.price,
+          priority: goalData.priority,
+          user_id: user.id,
+        });
 
-      toast.success("Cél sikeresen hozzáadva!");
+        if (error) throw error;
+        toast.success("Cél sikeresen hozzáadva!");
+      }
+
       queryClient.invalidateQueries({ queryKey: ["goals"] });
     } catch (error) {
-      console.error("Error adding goal:", error);
-      toast.error("Hiba történt a cél hozzáadásakor");
+      console.error("Error handling goal:", error);
+      toast.error("Hiba történt a művelet során");
     }
   };
 
@@ -83,8 +99,16 @@ export default function Goals() {
         <h1 className="text-3xl font-bold">Célok</h1>
       </div>
 
-      <GoalForm onSubmit={handleSubmit} />
-      <GoalList goals={goals || []} onDelete={handleDelete} />
+      <GoalForm 
+        goal={editingGoal}
+        onSubmit={handleSubmit}
+        onCancel={() => setEditingGoal(null)}
+      />
+      <GoalList 
+        goals={goals || []} 
+        onEdit={setEditingGoal}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

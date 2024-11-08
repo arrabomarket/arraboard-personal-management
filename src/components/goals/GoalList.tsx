@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface Goal {
   id: string;
@@ -11,6 +11,7 @@ interface Goal {
 
 interface GoalListProps {
   goals: Goal[];
+  onEdit: (goal: Goal) => void;
   onDelete: (id: string) => void;
 }
 
@@ -27,7 +28,7 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-export default function GoalList({ goals, onDelete }: GoalListProps) {
+export default function GoalList({ goals, onEdit, onDelete }: GoalListProps) {
   return (
     <div className="bg-white rounded-lg shadow-sm">
       <Table>
@@ -49,7 +50,14 @@ export default function GoalList({ goals, onDelete }: GoalListProps) {
                   {goal.priority}
                 </span>
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(goal)}
+                >
+                  <Pencil className="h-4 w-4 text-primary" />
+                </Button>
                 <Button
                   variant="ghost"
                   size="icon"

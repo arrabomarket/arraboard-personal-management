@@ -10,14 +10,23 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 
-interface DesireFormProps {
-  onSubmit: (desire: { title: string; price: number; priority: string }) => void;
+interface Goal {
+  id: string;
+  title: string;
+  price: number;
+  priority: string;
 }
 
-export default function DesireForm({ onSubmit }: DesireFormProps) {
-  const [title, setTitle] = useState("");
-  const [price, setPrice] = useState("");
-  const [priority, setPriority] = useState("");
+interface GoalFormProps {
+  goal: Goal | null;
+  onSubmit: (goal: Omit<Goal, "id">) => void;
+  onCancel?: () => void;
+}
+
+export default function GoalForm({ goal, onSubmit, onCancel }: GoalFormProps) {
+  const [title, setTitle] = useState(goal?.title || "");
+  const [price, setPrice] = useState(goal?.price?.toString() || "");
+  const [priority, setPriority] = useState(goal?.priority || "");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,9 +42,11 @@ export default function DesireForm({ onSubmit }: DesireFormProps) {
       priority,
     });
 
-    setTitle("");
-    setPrice("");
-    setPriority("");
+    if (!goal) {
+      setTitle("");
+      setPrice("");
+      setPriority("");
+    }
   };
 
   return (
@@ -63,9 +74,21 @@ export default function DesireForm({ onSubmit }: DesireFormProps) {
           </SelectContent>
         </Select>
       </div>
-      <Button type="submit" className="w-full">
-        Hozzáadás
-      </Button>
+      <div className="flex gap-2">
+        {goal && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            className="w-full"
+          >
+            Mégse
+          </Button>
+        )}
+        <Button type="submit" className="w-full">
+          {goal ? "Mentés" : "Hozzáadás"}
+        </Button>
+      </div>
     </form>
   );
 }
