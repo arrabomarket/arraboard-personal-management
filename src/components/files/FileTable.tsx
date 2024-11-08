@@ -18,6 +18,10 @@ interface FileTableProps {
   files: File[];
 }
 
+const truncateFilename = (filename: string, maxLength: number = 16) => {
+  return filename.length > maxLength ? `${filename.slice(0, maxLength)}...` : filename;
+};
+
 export function FileTable({ files }: FileTableProps) {
   const handleView = async (file: File) => {
     try {
@@ -69,7 +73,7 @@ export function FileTable({ files }: FileTableProps) {
         <TableBody>
           {files.map((file) => (
             <TableRow key={file.id}>
-              <TableCell>{file.filename}</TableCell>
+              <TableCell title={file.filename}>{truncateFilename(file.filename)}</TableCell>
               <TableCell>{file.content_type}</TableCell>
               <TableCell>{formatBytes(file.size)}</TableCell>
               <TableCell>
