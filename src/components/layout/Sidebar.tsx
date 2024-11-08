@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Logo from "./Logo";
 import {
   Calendar,
   Contact2,
@@ -12,8 +13,6 @@ import {
   Wallet,
   Lock,
   Settings as SettingsIcon,
-  Grid3x3,
-  CreditCard,
   ShoppingBag,
   Files,
 } from "lucide-react";
@@ -27,8 +26,7 @@ const NAVIGATION_LINKS = [
   { href: "/links", label: "Linkek", icon: LinkIcon },
   { href: "/calendar", label: "Naptár", icon: Calendar },
   { href: "/passwords", label: "Jelszókezelő", icon: Lock },
-  { href: "/subscriptions", label: "Előfizetések", icon: CreditCard },
-  { href: "/desires", label: "Vásárlás", icon: ShoppingBag },
+  { href: "/subscriptions", label: "Előfizetések", icon: ShoppingBag },
   { href: "/files", label: "Fájlok", icon: Files },
 ];
 
@@ -65,10 +63,7 @@ export default function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full w-64 flex-col bg-white">
       <div className="p-6">
-        <div className="flex items-center gap-2">
-          <Grid3x3 className="h-6 w-6 text-primary" />
-          <span className="font-semibold text-xl tracking-tight">ArraBoard</span>
-        </div>
+        <Logo />
       </div>
       <nav className="flex-1 space-y-1 px-3 py-2">
         {NAVIGATION_LINKS.map((link) => (
