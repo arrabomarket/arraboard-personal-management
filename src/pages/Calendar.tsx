@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trash2 } from "lucide-react";
+import { Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
 import { hu } from "date-fns/locale";
+import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TodoItem {
   id: string;
@@ -18,43 +19,90 @@ export default function CalendarPage() {
   const [date, setDate] = useState<Date>(new Date());
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodo, setNewTodo] = useState("");
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
-    const savedTodos = localStorage.getItem("calendarTodos");
-    if (savedTodos) {
-      setTodos(JSON.parse(savedTodos, (key, value) => {
-        if (key === 'date') return new Date(value);
-        return value;
-      }));
-    }
+    const fetchTodos = async () => {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const { data, error } = await supabase
+        .from('calendar_todos')
+        .select('*')
+        .eq('user_id', user.user.id);
+
+      if (error) {
+        toast.error("Hiba történt a tennivalók betöltésekor");
+        return;
+      }
+
+      if (data) {
+        setTodos(data.map(todo => ({
+          ...todo,
+          date: new Date(todo.date)
+        })));
+      }
+    };
+
+    fetchTodos();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("calendarTodos", JSON.stringify(todos));
-  }, [todos]);
-
-  const handleAddTodo = (e: React.FormEvent) => {
+  const handleAddTodo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTodo.trim()) {
       toast.error("A tennivaló nem lehet üres!");
       return;
     }
 
-    const todo: TodoItem = {
-      id: crypto.randomUUID(),
+    const { data: user } = await supabase.auth.getUser();
+    if (!user.user) return;
+
+    const todo = {
       date: date,
       title: newTodo.trim(),
+      user_id: user.user.id
     };
 
-    setTodos([...todos, todo]);
-    setNewTodo("");
-    toast.success("Tennivaló sikeresen hozzáadva!");
+    const { data, error } = await supabase
+      .from('calendar_todos')
+      .insert([todo])
+      .select()
+      .single();
+
+    if (error) {
+      toast.error("Hiba történt a tennivaló mentésekor");
+      return;
+    }
+
+    if (data) {
+      setTodos([...todos, { ...data, date: new Date(data.date) }]);
+      setNewTodo("");
+      toast.success("Tennivaló sikeresen hozzáadva!");
+    }
   };
 
-  const handleDeleteTodo = (todoId: string) => {
+  const handleDeleteTodo = async (todoId: string) => {
+    const { error } = await supabase
+      .from('calendar_todos')
+      .delete()
+      .eq('id', todoId);
+
+    if (error) {
+      toast.error("Hiba történt a tennivaló törlésekor");
+      return;
+    }
+
     setTodos(todos.filter((todo) => todo.id !== todoId));
     toast.success("Tennivaló sikeresen törölve!");
   };
+
+  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
+  const previousMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+
+  const days = eachDayOfInterval({
+    start: startOfMonth(currentMonth),
+    end: endOfMonth(currentMonth),
+  });
 
   const selectedDayTodos = todos.filter(
     (todo) => format(todo.date, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
@@ -65,35 +113,71 @@ export default function CalendarPage() {
       <h1 className="text-3xl font-bold">Naptár</h1>
 
       <div className="grid lg:grid-cols-12 gap-6">
-        <Card className="lg:col-span-5 xl:col-span-4 p-4">
-          <Calendar
-            mode="single"
-            selected={date}
-            onSelect={(newDate) => newDate && setDate(newDate)}
-            locale={hu}
-            className="w-full"
-            classNames={{
-              months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-              month: "space-y-4 w-full",
-              caption: "flex justify-center pt-1 relative items-center mb-4",
-              caption_label: "text-base font-semibold",
-              nav: "space-x-1 flex items-center",
-              nav_button: "h-8 w-8 bg-transparent p-0 hover:bg-accent rounded-full transition-colors",
-              nav_button_previous: "absolute left-1",
-              nav_button_next: "absolute right-1",
-              table: "w-full border-collapse",
-              head_row: "flex w-full",
-              head_cell: "text-muted-foreground rounded-md w-10 font-medium text-[0.875rem] mb-2",
-              row: "flex w-full mt-1",
-              cell: "relative p-0 text-center text-sm focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md",
-              day: "h-10 w-10 p-0 font-normal aria-selected:opacity-100 hover:bg-accent rounded-full transition-colors",
-              day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-full",
-              day_today: "bg-accent text-accent-foreground rounded-full",
-              day_outside: "text-muted-foreground opacity-50",
-              day_disabled: "text-muted-foreground opacity-50",
-              day_hidden: "invisible",
-            }}
-          />
+        <Card className="lg:col-span-5 xl:col-span-4">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={previousMonth}
+                className="h-8 w-8"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <h2 className="text-lg font-semibold">
+                {format(currentMonth, "MMMM yyyy", { locale: hu })}
+              </h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={nextMonth}
+                className="h-8 w-8"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {["H", "K", "Sze", "Cs", "P", "Szo", "V"].map((day) => (
+                <div
+                  key={day}
+                  className="text-center text-sm font-medium text-muted-foreground"
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-7 gap-1">
+              {Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay() - 1 }).map((_, i) => (
+                <div key={`empty-${i}`} className="h-10" />
+              ))}
+              {days.map((day) => {
+                const isSelected = isSameDay(date, day);
+                const isCurrentMonth = isSameMonth(currentMonth, day);
+                const hasTodos = todos.some((todo) =>
+                  isSameDay(new Date(todo.date), day)
+                );
+
+                return (
+                  <Button
+                    key={day.toISOString()}
+                    variant={isSelected ? "default" : "ghost"}
+                    className={cn(
+                      "h-10 w-full p-0 font-normal",
+                      !isCurrentMonth && "text-muted-foreground opacity-50",
+                      hasTodos && !isSelected && "bg-accent/50"
+                    )}
+                    onClick={() => setDate(day)}
+                  >
+                    <time dateTime={format(day, "yyyy-MM-dd")}>
+                      {format(day, "d")}
+                    </time>
+                  </Button>
+                );
+              })}
+            </div>
+          </CardContent>
         </Card>
 
         <Card className="lg:col-span-7 xl:col-span-8">
