@@ -13,6 +13,8 @@ import TransactionTable from "@/components/finance/TransactionTable";
 import { format, startOfMonth, endOfMonth, parse } from "date-fns";
 import { hu } from "date-fns/locale";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Finance() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -23,8 +25,104 @@ export default function Finance() {
   const [type, setType] = useState<TransactionType>("expense");
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [selectedCategory, setSelectedCategory] = useState<TransactionCategory | "all">("all");
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
-  // Egyedi hónapok kiszűrése a tranzakciókból
+  const user = useAuth();
+
+  useEffect(() => {
+    if (!user.user) return;
+    loadTransactions();
+  }, [user.user]);
+
+  const loadTransactions = async () => {
+    if (!user.user) return;
+    
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_id', user.user.id);
+    
+    if (error) {
+      toast.error("Hiba történt az adatok betöltésekor");
+      return;
+    }
+
+    if (data) {
+      setTransactions(data.map(t => ({
+        ...t,
+        date: new Date(t.date)
+      })));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!title.trim() || !amount || !date || !user.user) {
+      toast.error("Kérjük töltse ki az összes mezőt!");
+      return;
+    }
+
+    const transactionData = {
+      title: title.trim(),
+      amount: Number(amount),
+      date: date.toISOString(),
+      category,
+      type,
+      user_id: user.user.id,
+      ...(editingTransaction && { id: editingTransaction.id })
+    };
+
+    const { error } = editingTransaction
+      ? await supabase
+          .from('transactions')
+          .update(transactionData)
+          .eq('id', editingTransaction.id)
+      : await supabase
+          .from('transactions')
+          .insert(transactionData);
+
+    if (error) {
+      toast.error("Hiba történt a mentés során");
+      return;
+    }
+
+    setTitle("");
+    setAmount("");
+    setDate(new Date());
+    setCategory("personal");
+    setType("expense");
+    setEditingTransaction(null);
+    loadTransactions();
+    toast.success(editingTransaction ? "Tétel sikeresen módosítva!" : "Tétel sikeresen hozzáadva!");
+  };
+
+  const handleEdit = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setTitle(transaction.title);
+    setAmount(transaction.amount.toString());
+    setDate(new Date(transaction.date));
+    setCategory(transaction.category as TransactionCategory);
+    setType(transaction.type as TransactionType);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!user.user) return;
+
+    const { error } = await supabase
+      .from('transactions')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast.error("Hiba történt a törlés során");
+      return;
+    }
+
+    loadTransactions();
+    toast.success("Tétel sikeresen törölve!");
+  };
+
   const availableMonths = Array.from(
     new Set(
       transactions.map((t) => format(t.date, "yyyy-MM"))
@@ -37,55 +135,6 @@ export default function Finance() {
     };
   }).sort((a, b) => a.value.localeCompare(b.value));
 
-  useEffect(() => {
-    const savedTransactions = localStorage.getItem("transactions");
-    if (savedTransactions) {
-      setTransactions(JSON.parse(savedTransactions, (key, value) => {
-        if (key === 'date') return new Date(value);
-        return value;
-      }));
-    }
-  }, []);
-
-  // Mentjük a tranzakciókat amikor változnak
-  useEffect(() => {
-    localStorage.setItem("transactions", JSON.stringify(transactions));
-  }, [transactions]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!title.trim() || !amount || !date) {
-      toast.error("Kérjük töltse ki az összes mezőt!");
-      return;
-    }
-
-    const newTransaction: Transaction = {
-      id: crypto.randomUUID(),
-      title: title.trim(),
-      amount: Number(amount),
-      date,
-      category,
-      type,
-    };
-
-    setTransactions([...transactions, newTransaction]);
-    setTitle("");
-    setAmount("");
-    setDate(new Date());
-    setCategory("personal");
-    setType("expense");
-    toast.success("Tétel sikeresen hozzáadva!");
-  };
-
-  const months = Array.from({ length: 12 }, (_, i) => {
-    const date = new Date(2024, i, 1);
-    return {
-      value: format(date, "yyyy-MM"),
-      label: format(date, "yyyy. MMMM", { locale: hu })
-    };
-  });
-
   const filteredTransactions = transactions.filter((transaction) => {
     const isInSelectedMonth = 
       transaction.date >= startOfMonth(selectedMonth) &&
@@ -96,15 +145,6 @@ export default function Finance() {
 
     return isInSelectedMonth && matchesCategory;
   });
-
-  const getCategoryLabel = (category: TransactionCategory) => {
-    switch(category) {
-      case "personal": return "Személyes";
-      case "work": return "Munka";
-      case "extra": return "Extra";
-      default: return category;
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -148,7 +188,28 @@ export default function Finance() {
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit" className="w-full">Hozzáadás</Button>
+        <div className="flex gap-2">
+          {editingTransaction && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setEditingTransaction(null);
+                setTitle("");
+                setAmount("");
+                setDate(new Date());
+                setCategory("personal");
+                setType("expense");
+              }}
+              className="w-full"
+            >
+              Mégse
+            </Button>
+          )}
+          <Button type="submit" className="w-full">
+            {editingTransaction ? "Mentés" : "Hozzáadás"}
+          </Button>
+        </div>
       </form>
 
       <div className="space-y-4">
@@ -186,7 +247,11 @@ export default function Finance() {
             </Select>
           </div>
         </div>
-        <TransactionTable transactions={filteredTransactions} />
+        <TransactionTable 
+          transactions={filteredTransactions}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );
