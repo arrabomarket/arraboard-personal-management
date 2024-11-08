@@ -15,6 +15,11 @@ interface Note {
   content: string;
 }
 
+interface NoteFormData {
+  title: string;
+  content: string;
+}
+
 export default function Notes() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
@@ -24,21 +29,25 @@ export default function Notes() {
   const { data: notes = [], isLoading } = useQuery({
     queryKey: ["notes"],
     queryFn: async () => {
+      if (!user) return [];
       const { data, error } = await supabase
         .from("notes")
         .select("*")
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data;
     },
+    enabled: !!user,
   });
 
   const createNoteMutation = useMutation({
-    mutationFn: async (note: { title: string; content: string }) => {
+    mutationFn: async (note: NoteFormData) => {
+      if (!user) throw new Error("User not authenticated");
       const { data, error } = await supabase
         .from("notes")
-        .insert([{ ...note, user_id: user?.id }])
+        .insert([{ ...note, user_id: user.id }])
         .select()
         .single();
 
@@ -56,11 +65,13 @@ export default function Notes() {
   });
 
   const updateNoteMutation = useMutation({
-    mutationFn: async ({ id, ...note }: Note & { title: string; content: string }) => {
+    mutationFn: async ({ id, ...note }: Note) => {
+      if (!user) throw new Error("User not authenticated");
       const { data, error } = await supabase
         .from("notes")
         .update(note)
         .eq("id", id)
+        .eq("user_id", user.id)
         .select()
         .single();
 
@@ -79,7 +90,12 @@ export default function Notes() {
 
   const deleteNoteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("notes").delete().eq("id", id);
+      if (!user) throw new Error("User not authenticated");
+      const { error } = await supabase
+        .from("notes")
+        .delete()
+        .eq("id", id)
+        .eq("user_id", user.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -105,7 +121,7 @@ export default function Notes() {
     setEditingNote(null);
   };
 
-  const handleSubmit = (formData: { title: string; content: string }) => {
+  const handleSubmit = (formData: NoteFormData) => {
     if (editingNote) {
       updateNoteMutation.mutate({ ...editingNote, ...formData });
     } else {
