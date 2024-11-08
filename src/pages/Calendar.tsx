@@ -58,7 +58,7 @@ export default function CalendarPage() {
     if (!user.user) return;
 
     const todo = {
-      date: date,
+      date: date.toISOString(), // Convert Date to ISO string format
       title: newTodo.trim(),
       user_id: user.user.id
     };
