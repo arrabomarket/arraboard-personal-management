@@ -8,4 +8,6 @@ export interface Transaction {
   date: Date;
   category: TransactionCategory;
   type: TransactionType;
+  user_id: string;
+  created_at?: string;
 }

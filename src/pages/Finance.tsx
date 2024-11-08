@@ -8,13 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Transaction, TransactionCategory, TransactionType } from "@/types/finance";
 import TransactionTable from "@/components/finance/TransactionTable";
 import { format, startOfMonth, endOfMonth, parse } from "date-fns";
 import { hu } from "date-fns/locale";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { Transaction, TransactionCategory, TransactionType } from "@/types/finance";
 
 export default function Finance() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -50,7 +50,9 @@ export default function Finance() {
     if (data) {
       setTransactions(data.map(t => ({
         ...t,
-        date: new Date(t.date)
+        date: new Date(t.date),
+        category: t.category as TransactionCategory,
+        type: t.type as TransactionType
       })));
     }
   };
