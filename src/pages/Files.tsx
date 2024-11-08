@@ -3,11 +3,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { FileTable } from "@/components/files/FileTable";
 import { FileUpload } from "@/components/files/FileUpload";
+import { Button } from "@/components/ui/button";
+import { FolderPlus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 export default function Files() {
   const queryClient = useQueryClient();
   const [isUploading, setIsUploading] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: files, isLoading } = useQuery({
     queryKey: ['files'],
@@ -22,13 +28,50 @@ export default function Files() {
     }
   });
 
+  const createFolder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newFolderName.trim()) return;
+
+    try {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error("Nincs bejelentkezve");
+
+      const { error } = await supabase
+        .from('folders')
+        .insert({
+          name: newFolderName,
+          user_id: user.id
+        });
+
+      if (error) throw error;
+
+      toast.success('Mappa sikeresen létrehozva');
+      setNewFolderName("");
+      setIsDialogOpen(false);
+    } catch (error: any) {
+      toast.error('Hiba történt: ' + error.message);
+    }
+  };
+
   const handleUpload = async (file: File) => {
+    if (file.size > 256 * 1024 * 1024) {
+      toast.error('A fájl mérete nem lehet nagyobb mint 256MB');
+      return;
+    }
+
+    const allowedExtensions = ['jpg', 'png', 'svg', 'ico', 'zip', 'rar', 'pdf', 'doc', 'txt', 'xls'];
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
+    
+    if (!fileExt || !allowedExtensions.includes(fileExt)) {
+      toast.error('Nem támogatott fájltípus');
+      return;
+    }
+
     try {
       setIsUploading(true);
       const user = (await supabase.auth.getUser()).data.user;
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error("Nincs bejelentkezve");
 
-      const fileExt = file.name.split('.').pop();
       const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
@@ -50,9 +93,9 @@ export default function Files() {
       if (dbError) throw dbError;
 
       queryClient.invalidateQueries({ queryKey: ['files'] });
-      toast.success('File uploaded successfully');
+      toast.success('Fájl sikeresen feltöltve');
     } catch (error: any) {
-      toast.error('Upload failed: ' + error.message);
+      toast.error('Feltöltés sikertelen: ' + error.message);
     } finally {
       setIsUploading(false);
     }
@@ -61,13 +104,34 @@ export default function Files() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Files</h1>
+        <h1 className="text-2xl font-semibold">Fájlok</h1>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <FolderPlus className="h-4 w-4 mr-2" />
+              Új mappa
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Új mappa létrehozása</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={createFolder} className="space-y-4">
+              <Input
+                placeholder="Mappa neve"
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+              />
+              <Button type="submit">Létrehozás</Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
       
       <FileUpload onUpload={handleUpload} isUploading={isUploading} />
       
       {isLoading ? (
-        <div>Loading...</div>
+        <div>Betöltés...</div>
       ) : (
         <FileTable files={files || []} />
       )}

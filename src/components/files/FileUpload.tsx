@@ -33,11 +33,17 @@ export function FileUpload({ onUpload, isUploading }: FileUploadProps) {
       <input {...getInputProps()} />
       <FilePlus className="h-10 w-10 text-gray-400 mb-4" />
       {isDragActive ? (
-        <p>Drop the file here...</p>
+        <p>Húzd ide a fájlt...</p>
       ) : (
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            {isUploading ? 'Uploading...' : 'Drag & drop a file here, or click to select'}
+            {isUploading ? 'Feltöltés...' : 'Húzd ide a fájlt, vagy kattints a böngészéshez'}
+          </p>
+          <p className="text-xs text-gray-500 mt-2">
+            Támogatott formátumok: jpg, png, svg, ico, zip, rar, pdf, doc, txt, xls
+          </p>
+          <p className="text-xs text-gray-500">
+            Maximum méret: 256MB
           </p>
         </div>
       )}
