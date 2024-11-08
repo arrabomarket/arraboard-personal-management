@@ -15,16 +15,16 @@ interface NoteListProps {
 
 export function NoteList({ notes, onEdit, onDelete }: NoteListProps) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       {notes.map((note, index) => (
         <div
           key={note.id}
-          className={`flex items-center justify-between p-4 rounded-lg ${
+          className={`flex items-center justify-between p-2.5 rounded-lg ${
             index % 2 === 0 ? "bg-[#13A3B5] text-white" : "bg-[#CDCDCD]"
           }`}
         >
           <span className="font-medium">{note.title}</span>
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             <Button
               variant="ghost"
               size="icon"
