@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Clock, ListCheck, Calendar as CalendarIcon, Wallet, ExternalLink, Target } from "lucide-react";
-import { format, startOfWeek, addDays } from "date-fns";
-import { hu } from "date-fns/locale";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import TimeWidget from "@/components/dashboard/TimeWidget";
+import FinanceWidget from "@/components/dashboard/FinanceWidget";
+import TasksWidget from "@/components/dashboard/TasksWidget";
+import GoalsWidget from "@/components/dashboard/GoalsWidget";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CalendarIcon } from "lucide-react";
+import { startOfWeek, addDays } from "date-fns";
+import { hu } from "date-fns/locale";
 
 export default function Dashboard() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -74,12 +78,6 @@ export default function Dashboard() {
     };
   });
 
-  const quickLinks = [
-    { name: 'VPS', url: 'https://plesk.arrabomarket.hu:8443/', icon: ExternalLink },
-    { name: 'RACKHOST', url: 'https://www.rackhost.hu/site/serviceList', icon: ExternalLink },
-    { name: 'CHAT GPT', url: 'https://chatgpt.com/', icon: ExternalLink },
-  ];
-
   // Load high priority goals for dashboard
   const { data: highPriorityGoals } = useQuery({
     queryKey: ["high-priority-goals"],
@@ -108,88 +106,17 @@ export default function Dashboard() {
       <div className="grid gap-4 bg-[#f5f5f5] p-4 rounded-lg">
         {/* First Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Time Widget */}
-          <Card className="md:col-span-1 bg-[#13A3B5] text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pontos idő</CardTitle>
-              <Clock className="h-4 w-4" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {format(currentTime, "HH:mm:ss")}
-              </div>
-              <div className="text-xl mt-2">
-                {format(currentTime, "yyyy. MMMM d.", { locale: hu })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Monthly Finance Widget */}
-          <Card className="md:col-span-2 bg-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Havi pénzügyek</CardTitle>
-              <Wallet className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="flex justify-between">
-                <span>Bevétel:</span>
-                <span className="text-green-600">+{monthlyIncome.toLocaleString('hu-HU')} Ft</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Kiadás:</span>
-                <span className="text-red-600">-{monthlyExpenses.toLocaleString('hu-HU')} Ft</span>
-              </div>
-            </CardContent>
-          </Card>
+          <TimeWidget currentTime={currentTime} />
+          <FinanceWidget monthlyIncome={monthlyIncome} monthlyExpenses={monthlyExpenses} />
         </div>
 
         {/* Second Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Today's Tasks */}
-          <Card className="bg-black text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Mai tennivalók</CardTitle>
-              <ListCheck className="h-4 w-4" />
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {todaysTasks.length === 0 ? (
-                  <p className="text-white/70">Nincs mai tennivaló</p>
-                ) : (
-                  todaysTasks.map((task) => (
-                    <div key={task.id} className="flex items-center justify-between rounded-lg border border-white/20 p-2">
-                      <span>{task.title}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* High Priority Goals */}
-          <Card className="bg-[#13A3B5] text-white">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Fő Célok</CardTitle>
-              <Target className="h-4 w-4" />
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {!highPriorityGoals || highPriorityGoals.length === 0 ? (
-                  <p className="text-white/70">Nincs magas prioritású cél</p>
-                ) : (
-                  highPriorityGoals.map((goal) => (
-                    <div key={goal.id} className="flex items-center justify-between rounded-lg border border-white/20 p-2">
-                      <span>{goal.title}</span>
-                      <span>{goal.price.toLocaleString('hu-HU')} Ft</span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <TasksWidget tasks={todaysTasks} />
+          <GoalsWidget goals={highPriorityGoals} />
         </div>
 
-        {/* Third Row */}
+        {/* Calendar Widget */}
         <Card className="bg-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Heti naptár</CardTitle>

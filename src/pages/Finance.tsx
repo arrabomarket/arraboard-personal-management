@@ -1,20 +1,13 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import TransactionTable from "@/components/finance/TransactionTable";
 import { format, startOfMonth, endOfMonth, parse } from "date-fns";
 import { hu } from "date-fns/locale";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Transaction, TransactionCategory, TransactionType } from "@/types/finance";
+import TransactionTable from "@/components/finance/TransactionTable";
+import TransactionForm from "@/components/finance/TransactionForm";
+import TransactionFilters from "@/components/finance/TransactionFilters";
 
 export default function Finance() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -89,14 +82,18 @@ export default function Finance() {
       return;
     }
 
+    resetForm();
+    loadTransactions();
+    toast.success(editingTransaction ? "Tétel sikeresen módosítva!" : "Tétel sikeresen hozzáadva!");
+  };
+
+  const resetForm = () => {
     setTitle("");
     setAmount("");
     setDate(new Date());
     setCategory("personal");
     setType("expense");
     setEditingTransaction(null);
-    loadTransactions();
-    toast.success(editingTransaction ? "Tétel sikeresen módosítva!" : "Tétel sikeresen hozzáadva!");
   };
 
   const handleEdit = (transaction: Transaction) => {
@@ -104,8 +101,8 @@ export default function Finance() {
     setTitle(transaction.title);
     setAmount(transaction.amount.toString());
     setDate(new Date(transaction.date));
-    setCategory(transaction.category as TransactionCategory);
-    setType(transaction.type as TransactionType);
+    setCategory(transaction.category);
+    setType(transaction.type);
   };
 
   const handleDelete = async (id: string) => {
@@ -152,102 +149,32 @@ export default function Finance() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Pénzügy</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Input
-            placeholder="Tétel"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <Input
-            type="number"
-            placeholder="Összeg"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
-          <Input
-            type="date"
-            value={format(date, "yyyy-MM-dd")}
-            onChange={(e) => setDate(new Date(e.target.value))}
-          />
-          <Select value={category} onValueChange={(value) => setCategory(value as TransactionCategory)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Kategória" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="personal">Személyes</SelectItem>
-              <SelectItem value="work">Munka</SelectItem>
-              <SelectItem value="extra">Extra</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={type} onValueChange={(value) => setType(value as TransactionType)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Jelleg" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="income">Bevétel</SelectItem>
-              <SelectItem value="expense">Kiadás</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex gap-2">
-          {editingTransaction && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setEditingTransaction(null);
-                setTitle("");
-                setAmount("");
-                setDate(new Date());
-                setCategory("personal");
-                setType("expense");
-              }}
-              className="w-full"
-            >
-              Mégse
-            </Button>
-          )}
-          <Button type="submit" className="w-full">
-            {editingTransaction ? "Mentés" : "Hozzáadás"}
-          </Button>
-        </div>
-      </form>
+      <TransactionForm
+        title={title}
+        amount={amount}
+        date={date}
+        category={category}
+        type={type}
+        editingTransaction={editingTransaction}
+        onSubmit={handleSubmit}
+        onTitleChange={setTitle}
+        onAmountChange={setAmount}
+        onDateChange={setDate}
+        onCategoryChange={setCategory}
+        onTypeChange={setType}
+        onCancel={resetForm}
+      />
 
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-semibold">Tranzakciók</h2>
-          <div className="flex gap-4">
-            <Select 
-              value={format(selectedMonth, "yyyy-MM")}
-              onValueChange={(value) => setSelectedMonth(parse(value, "yyyy-MM", new Date()))}
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Válasszon hónapot" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableMonths.map((month) => (
-                  <SelectItem key={month.value} value={month.value}>
-                    {month.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select 
-              value={selectedCategory} 
-              onValueChange={(value) => setSelectedCategory(value as TransactionCategory | "all")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Kategória" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Összes</SelectItem>
-                <SelectItem value="personal">Személyes</SelectItem>
-                <SelectItem value="work">Munka</SelectItem>
-                <SelectItem value="extra">Extra</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <TransactionFilters
+            selectedMonth={selectedMonth}
+            selectedCategory={selectedCategory}
+            availableMonths={availableMonths}
+            onMonthChange={setSelectedMonth}
+            onCategoryChange={setSelectedCategory}
+          />
         </div>
         <TransactionTable 
           transactions={filteredTransactions}
