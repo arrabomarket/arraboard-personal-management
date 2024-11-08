@@ -15,6 +15,7 @@ import {
   Grid3x3,
   CreditCard,
   Heart,
+  Files,
 } from "lucide-react";
 
 // Separate the navigation links into a constant
@@ -29,6 +30,7 @@ const NAVIGATION_LINKS = [
   { href: "/passwords", label: "Jelszókezelő", icon: Lock },
   { href: "/subscriptions", label: "Előfizetések", icon: CreditCard },
   { href: "/desires", label: "Célok", icon: Heart },
+  { href: "/files", label: "Fájlok", icon: Files },
 ];
 
 // Separate the navigation button into a component
