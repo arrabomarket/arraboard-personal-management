@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ListTodo, FileText, Link2, Contact2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { FileText, Link as LinkIcon, Users, Calendar } from "lucide-react";
 
 export default function QuickAccessCard() {
   return (
@@ -9,22 +10,22 @@ export default function QuickAccessCard() {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4">
-          <a href="/tasks" className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-            <ListTodo className="h-5 w-5 text-primary" />
-            <span>Tennivalók</span>
-          </a>
-          <a href="/notes" className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-            <FileText className="h-5 w-5 text-primary" />
+          <Link to="/notes" className="flex items-center gap-2 p-2 rounded-lg border hover:bg-gray-50">
+            <FileText className="h-4 w-4" />
             <span>Jegyzetek</span>
-          </a>
-          <a href="/links" className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-            <Link2 className="h-5 w-5 text-primary" />
+          </Link>
+          <Link to="/links" className="flex items-center gap-2 p-2 rounded-lg border hover:bg-gray-50">
+            <LinkIcon className="h-4 w-4" />
             <span>Linkek</span>
-          </a>
-          <a href="/contacts" className="flex items-center gap-2 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-            <Contact2 className="h-5 w-5 text-primary" />
+          </Link>
+          <Link to="/contacts" className="flex items-center gap-2 p-2 rounded-lg border hover:bg-gray-50">
+            <Users className="h-4 w-4" />
             <span>Kapcsolatok</span>
-          </a>
+          </Link>
+          <Link to="/calendar" className="flex items-center gap-2 p-2 rounded-lg border hover:bg-gray-50">
+            <Calendar className="h-4 w-4" />
+            <span>Naptár</span>
+          </Link>
         </div>
       </CardContent>
     </Card>
