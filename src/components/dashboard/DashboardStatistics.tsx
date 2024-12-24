@@ -1,6 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function DashboardStatistics() {
+interface DashboardStatisticsProps {
+  monthlyIncome: number;
+  monthlyExpenses: number;
+}
+
+export default function DashboardStatistics({ monthlyIncome, monthlyExpenses }: DashboardStatisticsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Card className="bg-white">
